@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.dex.dexcraft.launcher</groupId>
   <artifactId>Client</artifactId>
-  <version>11.0.0-201129-2298</version>
+  <version>11.0.0-201213-2416</version>
   <build>
-    <finalName>DexCraftLauncherInit</finalName>
+    <finalName>DexCraftLauncher</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

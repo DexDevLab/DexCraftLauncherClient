@@ -1,6 +1,7 @@
 
 
 
+
 # License
 This program and its files, its codes, implementation and functions are under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3.
 
@@ -199,3 +200,15 @@ Created:
 * Splash Screen.
 * Login Screen.
 * Login fields validation class.
+
+## v11.0.0-201213-2416
+A lot of progress in the client creation. Not totally done yet, but I keep working as I have time to it.
+I changed the entire utility classes to another folder in package so I can make it as a library in the future. I've tried a lot but I couldn't make it right now.
+
+Created:
+* Icons for the servers (got from the old client version).
+* CSS to stylize fonts and stuff.
+* Main client window fxml base file.
+* Thread class to run and change dynamically a background wallpaper in the client's main window.
+* Thread class to play music during client execution.
+* Service and threads to validate login fields and access database to create a new player account.

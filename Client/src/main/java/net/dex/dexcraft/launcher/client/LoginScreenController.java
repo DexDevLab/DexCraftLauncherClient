@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,8 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import net.dex.dexcraft.launcher.tools.Account;
-import net.dex.dexcraft.launcher.tools.DexUI;
+import net.dex.dexcraft.commons.tools.DexUI;
+import net.dex.dexcraft.commons.tools.ErrorAlerts;
 
 /**
  * FXML Controller Class.
@@ -36,7 +37,10 @@ public class LoginScreenController implements Initializable
   public PasswordField loginScreenPINField;
 
   @FXML
-  public Label loginScreenHelp;
+  public Label loginScreenHelpName;
+
+  @FXML
+  public Label loginScreenHelpPIN;
 
   @FXML
   public Label loginScreenAbout;
@@ -44,71 +48,39 @@ public class LoginScreenController implements Initializable
   @FXML
   private ComboBox<String> loginScreenServerComboBox;
 
-  public String username;
 
-  public String password;
+  public static String serviceName = "";
+  public static String username = "";
+
+  public static String password = "";
+
+  public static int loginCode = 99;
+
+  public static DexUI loginUI = new DexUI();
+  public static ErrorAlerts loginAlerts = new ErrorAlerts();
+
+  public static int errorAttempts = 0;
 
 
   @FXML
-  private void doLogin(ActionEvent event)
+  public void doLogin(ActionEvent event)
   {
+    loginScreenLoginButton.setDisable(true);
     Client.logger.log("INFO", "Realizando login...");
+    loginScreenWaitLabel.setText("Aguarde...");
     loginScreenWaitLabel.setVisible(true);
+
+    // UI Tool Bindings
+    loginUI.setMainLabel(loginScreenWaitLabel);
+    loginUI.setMainTextField(loginScreenUserField);
+    loginUI.setMainPasswordField(loginScreenPINField);
+    loginUI.setMainButton(loginScreenLoginButton);
+
     username = loginScreenUserField.getText();
     password = loginScreenPINField.getText();
-    if(!Validate.offlineMode)
-    {
-      int loginCode = 0;
-      Account login = new Account();
-      loginCode = login.login(username, password);
-      switch (loginCode)
-      {
-        case 1:
-          Client.logger.log("INFO", "ERRO DE LOGIN: Insira um nome de usuário.");
-          loginScreenWaitLabel.setText("Insira um nome de usuário.");
-          loginScreenWaitLabel.setStyle("-fx-text-fill: red;");
-          loginScreenUserField.setStyle("-fx-background-color: red;");
-          break;
-        case 2:
-          Client.logger.log("INFO", "ERRO DE LOGIN: Insira um PIN de 4 a 8 dígitos.");
-          loginScreenWaitLabel.setText("Insira um PIN de 4 a 8 dígitos.");
-          loginScreenWaitLabel.setStyle("-fx-text-fill: red;");
-          loginScreenPINField.setStyle("-fx-background-color: red;");
-          break;
-        case 3:
-          Client.logger.log("INFO", "ERRO DE LOGIN: O PIN deve conter 4 a 8 dígitos, sem espaços.");
-          loginScreenWaitLabel.setText("O PIN deve conter 4 a 8 dígitos, sem espaços.");
-          loginScreenWaitLabel.setStyle("-fx-text-fill: red;");
-          loginScreenPINField.setStyle("-fx-background-color: red;");
-          break;
-        case 4:
-          Client.logger.log("INFO", "ERRO DE LOGIN: O PIN deve conter APENAS NÚMEROS.");
-          loginScreenWaitLabel.setText("O PIN deve conter APENAS NÚMEROS.");
-          loginScreenWaitLabel.setStyle("-fx-text-fill: red;");
-          loginScreenPINField.setStyle("-fx-background-color: red;");
-          break;
-        case 5:
-          Client.logger.log("INFO", "ERRO DE LOGIN: O nome de usuário deve conter 3 a 12 caracteres, sem espaços ou símbolos.");
-          loginScreenWaitLabel.setText("O nome de usuário deve conter 3 a 12 caracteres, sem espaços ou símbolos.");
-          loginScreenWaitLabel.setStyle("-fx-text-fill: red;");
-          loginScreenUserField.setStyle("-fx-background-color: red;");
-          break;
-        case 6:
-          Client.logger.log("INFO", "ERRO DE LOGIN: O nome de usuário NÃO pode conter caracteres especiais, números ou espaços.");
-          loginScreenWaitLabel.setText("O nome de usuário NÃO pode conter caracteres especiais, números ou espaços.");
-          loginScreenWaitLabel.setStyle("-fx-text-fill: red;");
-          loginScreenUserField.setStyle("-fx-background-color: red;");
-          break;
-        default:
-          Client.logger.log("INFO", "LOGIN: Campos validados.");
-          break;
-      }
-    }
-    else
-    {
-      Client.logger.log("INFO", "O login com o Servidor não será validado devido ao Modo Offline.");
-    }
-
+    serviceName = "LoginVerification";
+    LoginServices login = new LoginServices();
+    new Thread(login).start();
   }
 
   @FXML
@@ -118,22 +90,30 @@ public class LoginScreenController implements Initializable
   }
 
   @FXML
-  void doClearField(MouseEvent event)
+  private void doClearField(MouseEvent event)
+  {
+    clearFields();
+  }
+
+
+  public void clearFields()
   {
     loginScreenUserField.setStyle("-fx-background-color: white;");
     loginScreenPINField.setStyle("-fx-background-color: white;");
     loginScreenWaitLabel.setStyle("-fx-text-fill: white");
     loginScreenWaitLabel.setText("Aguarde...");
     loginScreenWaitLabel.setVisible(false);
+    loginScreenLoginButton.setDisable(false);
   }
 
   private void setTooltips()
   {
-    loginScreenHelp.setTooltip(DexUI.tooltipBuilder("O nome de usuário criado (4 a 12 caracteres, sem caracteres especiais) \n"
-                                             + "será utilizado também dentro do jogo e não poderá ser alterado.\n"
-                                             + "A senha é um PIN de 4 a 8 dígitos numéricos."));
-    loginScreenAbout.setTooltip(DexUI.tooltipBuilder("Sobre..."));
-    loginScreenServerComboBox.setTooltip(DexUI.tooltipBuilder("Escolha um dos servidores para jogar."));
+
+    loginScreenHelpName.setTooltip(loginUI.tooltipBuilder("O nome de usuário criado (3 a 12 caracteres, sem caracteres especiais) \n"
+                                                        + "será utilizado também dentro do jogo e não poderá ser alterado."));
+    loginScreenHelpPIN.setTooltip(loginUI.tooltipBuilder("A senha é um PIN de 4 a 8 dígitos numéricos."));
+    loginScreenAbout.setTooltip(loginUI.tooltipBuilder("Sobre..."));
+    loginScreenServerComboBox.setTooltip(loginUI.tooltipBuilder("Escolha um dos servidores para jogar."));
   }
 
 
@@ -145,7 +125,10 @@ public class LoginScreenController implements Initializable
   @Override
   public void initialize(URL url, ResourceBundle rb)
   {
+    // Load tooltips
     setTooltips();
+
+    // Load server options to connect and observables
     List<String> serverList =  new ArrayList<>();
     serverList.add("DexCraft Factions");
     serverList.add("DexCraft Pixelmon");
@@ -159,13 +142,20 @@ public class LoginScreenController implements Initializable
       if ( (new_value.intValue() == 0) || (new_value.intValue() == 2) || (new_value.intValue() == 3) )
       {
         loginScreenLoginButton.setDisable(true);
-        loginScreenServerComboBox.setTooltip(DexUI.tooltipBuilder("Servidor indisponível."));
+        loginScreenServerComboBox.setTooltip(loginUI.tooltipBuilder("Servidor indisponível."));
       }
       else if (new_value.intValue() == 1)
       {
-        loginScreenServerComboBox.setTooltip(DexUI.tooltipBuilder("Minere, construa, conquiste ginásios e capture pokémon!"));
+        loginScreenServerComboBox.setTooltip(loginUI.tooltipBuilder("Minere, construa, conquiste ginásios e capture pokémon!"));
       }
     });
-    loginScreenServerComboBox.getSelectionModel().select(Integer.parseInt(Validate.getLastServer()));
+    loginScreenServerComboBox.getSelectionModel().select(Integer.parseInt(Validate.lastServer));
+
+    loginScreenUserField.setText(Validate.lastUser);
+
+    Platform.runLater(()->
+    {
+      loginScreenLoginButton.requestFocus();
+    });
   }
 }

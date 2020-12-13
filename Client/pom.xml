@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.dex.dexcraft.launcher</groupId>
   <artifactId>Client</artifactId>
-  <version>11.0.0-201130-2392</version>
+  <version>11.0.0-201213-2416</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -21,21 +21,15 @@
       <version>13</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>3.5</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.8.0</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>net.lingala.zip4j</groupId>
-      <artifactId>zip4j</artifactId>
-      <version>2.5.2</version>
+      <groupId>commons-net</groupId>
+      <artifactId>commons-net</artifactId>
+      <version>3.7.2</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -45,27 +39,15 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.12.0-rc2</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20201115</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
       <version>2.8.6</version>
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>fr.bmartel</groupId>
-      <artifactId>jspeedtest</artifactId>
-      <version>1.32.1</version>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20201115</version>
       <type>jar</type>
     </dependency>
   </dependencies>

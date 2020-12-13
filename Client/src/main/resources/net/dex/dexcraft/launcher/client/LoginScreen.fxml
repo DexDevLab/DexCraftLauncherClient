@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" focusTraversable="true" maxHeight="600.0" maxWidth="800.0" minHeight="494.0" minWidth="800.0" prefHeight="494.0" prefWidth="800.0" translateX="1.0" translateY="1.0" translateZ="1.0" xmlns="http://javafx.com/javafx/8.0.271" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.dex.dexcraft.launcher.client.LoginScreenController">
+<AnchorPane id="AnchorPane" focusTraversable="true" maxHeight="600.0" maxWidth="800.0" minHeight="494.0" minWidth="800.0" prefHeight="494.0" prefWidth="800.0" translateX="1.0" translateY="1.0" translateZ="1.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.dex.dexcraft.launcher.client.LoginScreenController">
 <children>
       <ImageView fitHeight="650.0" fitWidth="807.0" layoutX="-3.0" layoutY="-7.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -26,7 +26,7 @@
             <DropShadow />
          </effect>
       </Label>
-      <TextField fx:id="loginScreenUserField" layoutX="406.0" layoutY="214.0" onMouseClicked="#doClearField" prefHeight="25.0" prefWidth="160.0" />
+      <TextField fx:id="loginScreenUserField" layoutX="406.0" layoutY="221.0" onMouseClicked="#doClearField" prefHeight="25.0" prefWidth="160.0" />
       <Button fx:id="loginScreenLoginButton" defaultButton="true" layoutX="346.0" layoutY="365.0" mnemonicParsing="false" onAction="#doLogin" prefHeight="46.0" prefWidth="109.0" style="-fx-font-size: 20;" stylesheets="@fxmlFont1.css" text="Login">
          <font>
             <Font size="20.0" />
@@ -35,25 +35,25 @@
             <DropShadow />
          </effect>
       </Button>
-      <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="234.0" layoutY="214.0" prefHeight="25.0" prefWidth="160.0" text="Nome de Jogador" textFill="WHITE">
+      <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="242.0" layoutY="222.0" prefHeight="0.0" prefWidth="138.0" text="Nome de Jogador" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="19.0" />
+            <Font name="Segoe UI Bold" size="16.0" />
          </font>
       </Label>
-      <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="234.0" layoutY="263.0" prefHeight="31.0" prefWidth="160.0" text="PIN" textFill="WHITE">
+      <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="286.0" layoutY="267.0" prefHeight="24.0" prefWidth="50.0" text="Senha" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="19.0" />
+            <Font name="Segoe UI Bold" size="16.0" />
          </font>
       </Label>
       <PasswordField fx:id="loginScreenPINField" layoutX="406.0" layoutY="266.0" onMouseClicked="#doClearField" prefHeight="25.0" prefWidth="160.0" />
       <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="214.0" layoutY="106.0" prefHeight="31.0" prefWidth="364.0" text="Faça seu login e tenha em qualquer lugar seus waypoints, mapas e saves. Se você não tiver uma conta de usuário, ela será criada." textAlignment="CENTER" textFill="WHITE" wrapText="true">
          <font>
-            <Font name="MS Outlook" size="12.0" />
+            <Font name="Segoe UI" size="12.0" />
          </font>
       </Label>
-      <Label fx:id="loginScreenHelp" layoutX="181.0" layoutY="74.0" prefHeight="17.0" prefWidth="21.0">
+      <Label fx:id="loginScreenHelpName" layoutX="569.0" layoutY="226.0" prefHeight="12.0" prefWidth="13.0">
          <graphic>
-            <ImageView fitHeight="19.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="13.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@questionmark1.png" />
                </image>
@@ -69,16 +69,25 @@
             </ImageView>
          </graphic>
       </Label>
-      <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="234.0" layoutY="311.0" prefHeight="25.0" prefWidth="160.0" text="Servidor" textFill="WHITE">
+      <ComboBox fx:id="loginScreenServerComboBox" layoutX="406.0" layoutY="311.0" prefHeight="25.0" prefWidth="160.0" promptText="Escolha um Servidor..." />
+      <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="276.0" layoutY="312.0" prefHeight="21.0" prefWidth="76.0" text="Servidor" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="19.0" />
+            <Font name="Segoe UI Bold" size="16.0" />
          </font>
       </Label>
-      <ComboBox fx:id="loginScreenServerComboBox" layoutX="406.0" layoutY="311.0" prefHeight="25.0" prefWidth="160.0" promptText="Escolha um Servidor..." />
       <Label fx:id="loginScreenWaitLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="208.0" layoutY="421.0" prefHeight="60.0" prefWidth="384.0" text="Aguarde..." textFill="WHITE" visible="false" wrapText="true">
          <font>
-            <Font name="MS Outlook" size="19.0" />
+            <Font name="Segoe UI Bold" size="19.0" />
          </font>
+      </Label>
+      <Label fx:id="loginScreenHelpPIN" layoutX="568.0" layoutY="270.0" prefHeight="14.0" prefWidth="13.0">
+         <graphic>
+            <ImageView fitHeight="18.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@questionmark1.png" />
+               </image>
+            </ImageView>
+         </graphic>
       </Label>
    </children>
 </AnchorPane>
