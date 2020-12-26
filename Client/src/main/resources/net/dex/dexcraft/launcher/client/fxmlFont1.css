@@ -6,11 +6,9 @@ src: url("Minecrafter.Alt.ttf");
 .title 
 {
 -fx-font-family: 'Minecrafter Alt';
--fx-font-size: 40;
+-fx-font-size: 36;
 -fx-font-alignment: "center";
--fx-text-fill: white;	 	 	 
--fx-pref-width: 474; 
--fx-pref-height: 55;
+-fx-text-fill: white;
 -fx-translate-y: 1;
 }
 
@@ -33,5 +31,45 @@ src: url("Minecrafter.Alt.ttf");
 -fx-font-size: 12;
 -fx-font-alignment: "center";
 -fx-text-fill: white;
--fx-translate-y: 170;
+}
+
+.server-desc-label
+{
+-fx-font-family: 'Segoe UI';
+-fx-font-weight: bold;
+-fx-font-size: 13;
+-fx-font-alignment: "center";
+-fx-text-fill: white;
+}
+
+#username-main-menu 
+{
+  -fx-font-family: 'Segoe UI';
+  -fx-font-size: 12;
+  -fx-font-weight:bold;
+}
+
+#server-combo-box 
+{
+  -fx-font-family: 'Segoe UI';
+  -fx-font-weight:bold;
+}
+
+#about-combo-box 
+{
+  -fx-font-family: 'Segoe UI';
+  -fx-font-weight:bold;
+}
+
+#default-menu
+{
+  -fx-font-family: 'Segoe UI';
+  -fx-font-size: 12;
+}
+
+#menu-item-bold
+{
+  -fx-font-family: 'Segoe UI';
+  -fx-font-size: 12;
+  -fx-font-weight:bold;
 }

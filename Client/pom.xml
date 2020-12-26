@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.dex.dexcraft.launcher</groupId>
   <artifactId>Client</artifactId>
-  <version>11.0.0-201213-2416</version>
+  <version>11.0.0-201225-2643</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -48,6 +48,12 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>20201115</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <version>2.7.1</version>
       <type>jar</type>
     </dependency>
   </dependencies>

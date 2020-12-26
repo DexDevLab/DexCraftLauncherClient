@@ -1,101 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="325.0" xmlns="http://javafx.com/javafx/8.0.271" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.dex.dexcraft.launcher.client.AboutWindowController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="325.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.dex.dexcraft.launcher.client.AboutWindowController">
    <children>
       <ImageView fitHeight="374.0" fitWidth="639.0" layoutX="-26.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@Splash3.jpg" />
          </image>
-         <effect>
-            <GaussianBlur radius="7.0" />
-         </effect>
       </ImageView>
       <Label layoutX="17.0" layoutY="159.0" prefHeight="34.0" prefWidth="292.0" style="-fx-font-size: 25;" styleClass="loginlabel" stylesheets="@fxmlFont1.css" text="DexCraft Launcher" textFill="WHITE">
          <font>
             <Font name="MS Outlook" size="24.0" />
          </font>
-      </Label>
-      <Label layoutX="101.0" layoutY="203.0" prefHeight="16.0" prefWidth="20.0" text="Init" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
+         <effect>
+            <DropShadow />
+         </effect>
       </Label>
       <ImageView fitHeight="145.0" fitWidth="151.0" layoutX="90.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@icon1.jpg" />
          </image>
       </ImageView>
-      <Label fx:id="aboutWindowInitVersion" layoutX="134.0" layoutY="199.0" prefHeight="23.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+      <Label layoutX="112.0" layoutY="267.0" text="Nome do Pacote" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="12.0" />
+            <Font name="Segoe UI Bold" size="13.0" />
          </font>
+         <effect>
+            <DropShadow />
+         </effect>
       </Label>
-      <Label layoutX="71.0" layoutY="224.0" prefHeight="16.0" prefWidth="52.0" text="Launcher" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+      <Label fx:id="aboutWindowVersionLabel" alignment="CENTER" layoutX="90.0" layoutY="329.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="145.0" text="v9999999" textAlignment="CENTER" textFill="WHITE">
          <font>
-            <Font name="MS Outlook" size="12.0" />
+            <Font name="Segoe UI Bold" size="13.0" />
          </font>
+         <effect>
+            <DropShadow />
+         </effect>
       </Label>
-      <Label fx:id="aboutWindowLauncherVersion" layoutX="134.0" layoutY="222.0" prefHeight="23.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="#fffdfd" wrapText="true">
+      <ComboBox fx:id="aboutWindowComboBox" layoutX="45.0" layoutY="291.0" prefHeight="29.0" prefWidth="236.0" />
+      <Label layoutX="24.0" layoutY="193.0" prefHeight="34.0" prefWidth="278.0" text="2018-2020. Desenvolvido por Daniel Augusto Almeida (Dex)" textAlignment="CENTER" textFill="WHITE" wrapText="true">
          <font>
-            <Font name="MS Outlook" size="12.0" />
+            <Font name="Segoe UI Bold" size="13.0" />
          </font>
+         <effect>
+            <DropShadow />
+         </effect>
       </Label>
-      <Label layoutX="11.0" layoutY="245.0" prefHeight="16.0" prefWidth="110.0" text="Background Services" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+      <Label fx:id="aboutWindowLicenseLabel" layoutX="91.0" layoutY="227.0" onMouseClicked="#openLicenseURL" prefHeight="17.0" prefWidth="145.0" text="Licença OpenSource GPL v3" textFill="#65deee" underline="true">
          <font>
-            <Font name="MS Outlook" size="12.0" />
+            <Font name="Segoe UI Italic" size="12.0" />
          </font>
-      </Label>
-      <Label fx:id="aboutWindowDCBSVersion" layoutX="134.0" layoutY="245.0" prefHeight="16.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label layoutX="8.0" layoutY="268.0" prefHeight="16.0" prefWidth="119.0" text="Factions Server Patch" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label fx:id="aboutWindowFactionsVersion" layoutX="134.0" layoutY="267.0" prefHeight="16.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label layoutX="4.0" layoutY="292.0" prefHeight="16.0" prefWidth="119.0" text="Pixelmon Server Patch" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label fx:id="aboutWindowPixelmonVersion" layoutX="134.0" layoutY="291.0" prefHeight="16.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label layoutX="17.0" layoutY="314.0" prefHeight="16.0" prefWidth="110.0" text="Vanilla Server Patch" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label layoutX="27.0" layoutY="336.0" prefHeight="16.0" prefWidth="97.0" text="Beta Server Patch" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label fx:id="aboutWindowVanillaVersion" layoutX="134.0" layoutY="314.0" prefHeight="16.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
-      </Label>
-      <Label fx:id="aboutWindowBetaVersion" layoutX="134.0" layoutY="337.0" prefHeight="16.0" prefWidth="119.0" text="v10.2.9-200612-2297" textAlignment="CENTER" textFill="WHITE" wrapText="true">
-         <font>
-            <Font name="MS Outlook" size="12.0" />
-         </font>
+         <effect>
+            <DropShadow />
+         </effect>
+         <cursor>
+            <Cursor fx:constant="OPEN_HAND" />
+         </cursor>
       </Label>
    </children>
 </AnchorPane>

@@ -1,4 +1,4 @@
-package net.dex.dexcraft.launcher.client;
+package net.dex.dexcraft.launcher.client.services;
 
 
 import java.io.File;
@@ -10,13 +10,15 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import static net.dex.dexcraft.commons.Commons.alerts;
+import static net.dex.dexcraft.commons.Commons.logger;
 import net.dex.dexcraft.commons.tools.DexCraftFiles;
 
 
 /**
- *
+ * Music player for background songs.
  */
-public class MusicPlayer extends Thread
+public class MusicPlayerService extends Thread
 {
   public File musicFile = new File ("");
   public AudioInputStream audioInput;
@@ -24,10 +26,13 @@ public class MusicPlayer extends Thread
 
   public float VOLUME = 0.7f;
 
+  /**
+   * Main method.
+   */
   @Override
   public void run()
   {
-    Client.logger.log("INFO", "Iniciando Thread MusicPlayer...");
+    logger.log("INFO", "Iniciando Thread MusicPlayer...");
     if (DexCraftFiles.resFolder.exists())
     {
       while (DexCraftFiles.resFolder.exists())
@@ -39,17 +44,20 @@ public class MusicPlayer extends Thread
     }
     else
     {
-      Client.logger.log("ERRO", "BACKGROUND PLAYER: NÃO É POSSÍVEL ENCONTRAR ARQUIVOS DE MÍDIA NO DIRETÓRIO DE RECURSOS.");
+      logger.log("ERRO", "BACKGROUND PLAYER: NÃO É POSSÍVEL ENCONTRAR ARQUIVOS DE MÍDIA NO DIRETÓRIO DE RECURSOS.");
     }
-    Client.logger.log("INFO", "Encerrando Thread MusicPlayer...");
+    logger.log("INFO", "Encerrando Thread MusicPlayer...");
   }
 
-
+  /**
+   * Performs music file reading and playback.
+   * @param musicFile the music file to be played.
+   */
   public void playMusic(File musicFile)
   {
     try
     {
-      Client.logger.log("INFO", "BACKGROUND PLAYER: Reproduzindo arquivo de áudio " + musicFile + "...");
+      logger.log("INFO", "BACKGROUND PLAYER: Reproduzindo arquivo de áudio " + musicFile + "...");
       audioInput = AudioSystem.getAudioInputStream(musicFile);
       clip = AudioSystem.getClip();
       clip.open(audioInput);
@@ -69,10 +77,7 @@ public class MusicPlayer extends Thread
     }
     catch (UnsupportedAudioFileException | IOException | LineUnavailableException | InterruptedException ex)
     {
-      Client.alerts.exceptionHandler(ex, "EXCEÇÃO EM BackgroundPlayer.playMusic(File)");
+      alerts.exceptionHandler(ex, "EXCEÇÃO EM BackgroundPlayer.playMusic(File)");
     }
   }
-
-
-
 }

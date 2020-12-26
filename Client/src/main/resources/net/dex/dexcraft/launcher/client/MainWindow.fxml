@@ -9,26 +9,33 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="mainWindowAnchorPane" focusTraversable="true" maxHeight="700.0" maxWidth="900.0" minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" translateX="1.0" translateY="1.0" translateZ="1.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.dex.dexcraft.launcher.client.MainWindowController">
+<AnchorPane id="AnchorPane" fx:id="mainWindowAnchorPane" focusTraversable="true" maxHeight="520.0" maxWidth="750.0" minHeight="520.0" minWidth="750.0" prefHeight="520.0" prefWidth="750.0" translateX="1.0" translateY="1.0" translateZ="1.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.dex.dexcraft.launcher.client.MainWindowController">
 	<children>
-      <ImageView fx:id="mainWindowBGImage" fitHeight="768.0" fitWidth="1092.0" focusTraversable="true" mouseTransparent="true" nodeOrientation="INHERIT" opacity="0.8" pickOnBounds="true" preserveRatio="true" smooth="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0" />
-		<Button fx:id="mainWindowPlayButton" alignment="CENTER" contentDisplay="CENTER" layoutX="353.0" layoutY="485.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#doPlay" prefHeight="43.0" prefWidth="98.0" style="-fx-font-size: 20;" stylesheets="@fxmlFont1.css" text="Jogar" textAlignment="CENTER" AnchorPane.bottomAnchor="72.0" AnchorPane.leftAnchor="353.0">
+      <ImageView fx:id="mainWindowBGImage" fitHeight="570.0" fitWidth="810.0" focusTraversable="true" layoutX="-12.0" layoutY="-10.0" mouseTransparent="true" nodeOrientation="INHERIT" pickOnBounds="true" smooth="false" AnchorPane.bottomAnchor="-88.0" AnchorPane.leftAnchor="-12.0" AnchorPane.rightAnchor="-190.0" AnchorPane.topAnchor="-10.0">
+         <image>
+            <Image url="@bg17.jpg" />
+         </image></ImageView>
+		<Button fx:id="mainWindowPlayButton" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="321.0" layoutY="411.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onAction="#doPlay" prefHeight="43.0" prefWidth="98.0" style="-fx-font-size: 20;" stylesheets="@fxmlFont1.css" text="Jogar" textAlignment="CENTER" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="321.0">
          <font>
             <Font name="MS Outlook" size="12.0" />
          </font>
+         <effect>
+            <DropShadow />
+         </effect>
       </Button>
-      <MenuBar fx:id="mainWindowMenuBar" layoutX="-12.0" layoutY="-1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="1113.0" stylesheets="@fxmlFont1.css" AnchorPane.leftAnchor="-12.0" AnchorPane.rightAnchor="-1.0">
+      <MenuBar fx:id="mainWindowMenuBar" disable="true" layoutX="-12.0" layoutY="-1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="763.0" AnchorPane.leftAnchor="-12.0" AnchorPane.rightAnchor="-1.0">
         <menus>
           <Menu fx:id="menuConta" mnemonicParsing="false" text="Conta">
             <items>
-                  <CustomMenuItem fx:id="menuBackupSingleplayer" hideOnClick="false" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
                      <content>
-                        <CheckBox fx:id="checkBoxBackupSingleplayer" mnemonicParsing="false" text="Backupear Mundos Singleplayer" textAlignment="CENTER" textFill="#1b1a1a">
+                        <CheckBox fx:id="checkBoxBackupSingleplayer" mnemonicParsing="false" selected="true" text="Backupear Mundos Singleplayer" textAlignment="CENTER" textFill="#1b1a1a">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font>
@@ -36,7 +43,7 @@
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <CustomMenuItem fx:id="menuDoBackup" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemDoBackup" mnemonicParsing="false" onAction="#doBackup">
                      <content>
                         <Label fx:id="labelDoBackup" text="Fazer Backup...">
                            <font>
@@ -44,18 +51,19 @@
                            </font></Label>
                      </content>
                   </CustomMenuItem>
-                  <CustomMenuItem fx:id="menuItemRestoreBackup" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemRestoreBackup" mnemonicParsing="false" onAction="#doBackupRestore">
                      <content>
-                        <Label fx:id="labelRestoreBackup" text="Restaurar do Backup...">
+                        <Label fx:id="labelRestoreBackup" text="Restaurar Backup...">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font></Label>
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <CustomMenuItem fx:id="menuLogoff" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <CustomMenuItem fx:id="menuItemLogout" mnemonicParsing="false" onAction="#doLogout">
                      <content>
-                        <Label fx:id="labelLogoff" text="Desconectar">
+                        <Label fx:id="labelLogout" text="Desconectar">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font>
@@ -64,198 +72,65 @@
                   </CustomMenuItem>
             </items>
           </Menu>
-            <Menu fx:id="menuFactions" mnemonicParsing="false" text="DexCraft Factions">
-               <items>
-                  <Menu fx:id="submenusoundpacksdc1" mnemonicParsing="false" text="Soundpacks">
-                     <items>
-                        <CustomMenuItem fx:id="custommenuitemsoundDCChocobov21" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelsoundDCChocobov21" text="No Batidão do Chocobo v2">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font>
-                              </Label>
-                           </content>
-                        </CustomMenuItem>
-                        <CustomMenuItem fx:id="custommenuitemsoundDCDCDeluxev21" disable="true" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelsoundDCDCDeluxev21" text="DexCraft Deluxe Soundpack v2">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font>
-                              </Label>
-                           </content>
-                        </CustomMenuItem>
-                     </items>
-                  </Menu>
-                  <Menu fx:id="submenusoundpacksdc11" mnemonicParsing="false" text="Soundpacks">
-                     <items>
-                        <CustomMenuItem fx:id="custommenuitemsoundDCChocobov211" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelsoundDCChocobov211" text="No Batidão do Chocobo v2">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font>
-                              </Label>
-                           </content>
-                        </CustomMenuItem>
-                        <CustomMenuItem fx:id="custommenuitemsoundDCDCDeluxev211" disable="true" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelsoundDCDCDeluxev211" text="DexCraft Deluxe Soundpack v2">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font>
-                              </Label>
-                           </content>
-                        </CustomMenuItem>
-                     </items>
-                  </Menu>
-                  <Menu fx:id="submenusoundpacksdc111" mnemonicParsing="false" text="Soundpacks">
-                     <items>
-                        <CustomMenuItem fx:id="custommenuitemsoundDCChocobov2111" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelsoundDCChocobov2111" text="No Batidão do Chocobo v2">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font>
-                              </Label>
-                           </content>
-                        </CustomMenuItem>
-                        <CustomMenuItem fx:id="custommenuitemsoundDCDCDeluxev2111" disable="true" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelsoundDCDCDeluxev2111" text="DexCraft Deluxe Soundpack v2">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font>
-                              </Label>
-                           </content>
-                        </CustomMenuItem>
-                     </items>
-                  </Menu>
-               </items>
-            </Menu>
           <Menu fx:id="menuExtras" mnemonicParsing="false" text="Extras">
             <items>
-                  <Menu fx:id="dexcraftFactionsSubmenu" mnemonicParsing="false" text="DexCraft Factions">
-                    <items>
-                        <Menu fx:id="submenusoundpacksdc" mnemonicParsing="false" text="Soundpacks">
-                           <items>
-                              <CustomMenuItem fx:id="custommenuitemsoundDCChocobov2" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelsoundDCChocobov2" text="No Batidão do Chocobo v2">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                              <CustomMenuItem fx:id="custommenuitemsoundDCDCDeluxev2" disable="true" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelsoundDCDCDeluxev2" text="DexCraft Deluxe Soundpack v2">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                           </items>
-                        </Menu>
-                        <Menu fx:id="submenushadersdc" mnemonicParsing="false" text="Shaders">
-                          <items>
-                              <CustomMenuItem fx:id="custommenuitemshaderdc1" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelshaderdc1" text="Shader 1">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                          </items>
-                        </Menu>
-                    </items>
-                  </Menu>
-                  <Menu fx:id="dexcraftPixelmonSubmenu" mnemonicParsing="false" text="DexCraft Pixelmon">
+                  <Menu fx:id="menuSoundpacks" mnemonicParsing="false" text="Soundpacks">
                      <items>
-                        <Menu fx:id="submenusoundpacksdcpx" mnemonicParsing="false" text="Soundpacks">
-                           <items>
-                              <CustomMenuItem fx:id="custommenuitemsoundDCPXChocobov2" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelsoundDCPXChocobov2" text="No Batidão do Chocobo v2">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                              <CustomMenuItem fx:id="custommenuitemsoundDCPXDCDeluxev2" disable="true" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelsoundDCPXDCDeluxev2" text="DexCraft Deluxe Soundpack v2">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                           </items>
-                        </Menu>
-                        <Menu fx:id="submenushadersdcpx" mnemonicParsing="false" text="Shaders">
-                           <items>
-                              <CustomMenuItem fx:id="custommenuitemshaderdcpx1" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelshaderdcpx1" text="Shader 1">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                              <CustomMenuItem fx:id="custommenuitemshaderdcpx2" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                                 <content>
-                                    <Label fx:id="labelshaderdcpx2" text="Shader 2">
-                                       <font>
-                                          <Font name="Segoe UI" size="12.0" />
-                                       </font></Label>
-                                 </content>
-                              </CustomMenuItem>
-                           </items>
-                        </Menu>
+                        <CustomMenuItem fx:id="menuItemExtraSoundChocoboV2" mnemonicParsing="false" onAction="#doInstallSoundChocoboV2">
+                           <content>
+                              <Label fx:id="labelSoundChocoboV2" text="No Batidão do Chocobo v2">
+                                 <font>
+                                    <Font name="Segoe UI" size="12.0" />
+                                 </font>
+                              </Label>
+                           </content>
+                        </CustomMenuItem>
+                        <CustomMenuItem fx:id="menuItemExtraSoundDCDeluxeV2" mnemonicParsing="false" onAction="#doInstallSoundDCDeluxeV2">
+                           <content>
+                              <Label fx:id="labelSoundDCDeluxeV2" text="DexCraft Deluxe Soundpack v2">
+                                 <font>
+                                    <Font name="Segoe UI" size="12.0" />
+                                 </font>
+                              </Label>
+                           </content>
+                        </CustomMenuItem>
                      </items>
+                  </Menu>
+                  <Menu fx:id="menuShaders" mnemonicParsing="false" text="Shaders">
+                    <items>
+                        <CustomMenuItem fx:id="menuItemShader1" mnemonicParsing="false" onAction="#doInstallShader1">
+                           <content>
+                              <Label fx:id="labelShader1" text="Shader 1">
+                                 <font>
+                                    <Font name="Segoe UI" size="12.0" />
+                                 </font>
+                              </Label>
+                           </content>
+                        </CustomMenuItem>
+                    </items>
                   </Menu>
             </items>
           </Menu>
-            <Menu fx:id="menuavancado" mnemonicParsing="false" text="Avançado">
+            <Menu fx:id="menuAvancado" mnemonicParsing="false" text="Avançado">
                <items>
-                  <CustomMenuItem fx:id="custommenuitemmincfg" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemMinCfg" mnemonicParsing="false" onAction="#doInstallMinCfg">
                      <content>
-                        <Label fx:id="labelmincfg" text="Usar configuração mínima...">
+                        <Label fx:id="labelMinCfg" text="Usar configuração mínima...">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font></Label>
                      </content>
                   </CustomMenuItem>
-                  <CustomMenuItem fx:id="custommenuitemmaxcfg" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemMaxCfg" mnemonicParsing="false" onAction="#doInstallMaxCfg">
                      <content>
-                        <Label fx:id="labelmaxcfg" text="Usar configuração máxima...">
+                        <Label fx:id="labelMaxCfg" text="Usar configuração máxima...">
                         </Label>
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <Menu fx:id="submenuremovejvmargs" mnemonicParsing="false" text="Remover Argumentos JVM">
-                     <items>
-                        <CustomMenuItem fx:id="custommenuitemresetdcargs" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelresetdcargs" text="DexCraft Factions...">
-                                 <font>
-                                    <Font name="Segoe UI" size="12.0" />
-                                 </font></Label>
-                           </content>
-                        </CustomMenuItem>
-                        <CustomMenuItem fx:id="custommenuitemresetdcpxargs" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
-                           <content>
-                              <Label fx:id="labelresetdcpxargs" text="DexCraft Pixelmon..." />
-                           </content>
-                        </CustomMenuItem>
-                     </items>
-                  </Menu>
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <CustomMenuItem fx:id="custommenuitemdefaultcfg" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemRemoveJVMArgs" mnemonicParsing="false" onAction="#doInstallNoJVMArgs">
                      <content>
-                        <Label fx:id="labeldefaultcfg" text="Configuração Padrão...">
+                        <Label fx:id="labelRemoveJVMArgs" text="Remover Argumentos JVM...">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font>
@@ -263,40 +138,50 @@
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <CustomMenuItem fx:id="customMenuItemOfflineMode" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemInstallDefultCfg" mnemonicParsing="false" onAction="#doInstallDefaultCfg">
                      <content>
-                        <CheckBox fx:id="checkboxOfflineMode" mnemonicParsing="false" text="Modo Offline" textAlignment="CENTER" textFill="#1b1a1a">
+                        <Label fx:id="labelInstallDefaultCfg" text="Configuração Padrão...">
                            <font>
-                              <Font name="Segoe UI Bold" size="12.0" />
+                              <Font name="Segoe UI" size="12.0" />
+                           </font>
+                        </Label>
+                     </content>
+                  </CustomMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <CustomMenuItem fx:id="menuItemOfflineMode" mnemonicParsing="false">
+                     <content>
+                        <CheckBox fx:id="checkBoxOfflineMode" mnemonicParsing="false" text="Modo Offline" textAlignment="CENTER" textFill="#1b1a1a">
+                           <font>
+                              <Font name="Segoe UI" size="12.0" />
                            </font>
                         </CheckBox>
                      </content>
                   </CustomMenuItem>
                </items>
             </Menu>
-          <Menu fx:id="menuajuda" mnemonicParsing="false" text="Ajuda">
+          <Menu fx:id="menuAjuda" mnemonicParsing="false" text="Ajuda">
             <items>
-                  <CustomMenuItem fx:id="custommenuitemreinstall" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemReinstallClient" mnemonicParsing="false" onAction="#doReinstallClient">
                      <content>
-                        <Label fx:id="labelreinstall" text="Reinstalar o Client...">
+                        <Label fx:id="labelReinstallClient" text="Reinstalar o Client...">
                            <font>
-                              <Font name="Segoe UI Bold" size="12.0" />
+                              <Font name="Segoe UI" size="12.0" />
                            </font>
                         </Label>
                      </content>
                   </CustomMenuItem>
-                  <CustomMenuItem fx:id="custommenuitemdeletelog" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemCleanLogs" mnemonicParsing="false" onAction="#doCleanLogs">
                      <content>
-                        <Label fx:id="labeldeletelog" text="Limpar Logs...">
+                        <Label fx:id="labelCleanLogs" text="Limpar Logs...">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font></Label>
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <CustomMenuItem fx:id="custommenuitemsobre" mnemonicParsing="false" onAction="#acaoCustomMenuItem">
+                  <CustomMenuItem fx:id="menuItemAbout" mnemonicParsing="false" onAction="#doOpenAboutWindow">
                      <content>
-                        <Label fx:id="labelsobre" text="Sobre...">
+                        <Label fx:id="labelAbout" text="Sobre...">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font></Label>
@@ -306,44 +191,50 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Label fx:id="labelinfo" alignment="CENTER" layoutX="2.0" layoutY="541.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="29.0" prefWidth="800.0" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="-2.0">
+      <Label fx:id="mainWindowTaskStatus" alignment="CENTER" layoutX="1.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="29.0" prefWidth="800.0" textAlignment="CENTER" textFill="#050068" wrapText="true" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
          <font>
-            <Font name="Calibri Bold" size="13.0" />
+            <Font name="Segoe UI Bold" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="mainWindowServerDesc" focusTraversable="false" layoutX="335.0" layoutY="364.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="81.0" prefWidth="134.0" text="Server desc here" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="155.0" AnchorPane.leftAnchor="335.0">
+      <Label fx:id="mainWindowServerDesc" focusTraversable="false" layoutX="306.0" layoutY="320.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="81.0" prefWidth="134.0" styleClass="server-desc-label" stylesheets="@fxmlFont1.css" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="119.0" AnchorPane.leftAnchor="306.0">
          <font>
             <Font name="Segoe UI" size="13.0" />
          </font>
       </Label>
-      <StackPane layoutX="-1.0" layoutY="738.0" maxWidth="1.7976931348623157E308" prefHeight="17.0" prefWidth="1101.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <ProgressBar fx:id="progress1" layoutY="721.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="16.0" prefWidth="799.0" progress="0.0" stylesheets="@gradientprogressbar.css" StackPane.alignment="BOTTOM_CENTER" />
-      		<Label fx:id="labelstatus" alignment="CENTER" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="15.0" prefWidth="1101.0" textAlignment="CENTER" StackPane.alignment="CENTER">
-               <font>
-                  <Font name="Calibri Bold" size="14.0" />
-               </font>
-            </Label>
-         </children>
-      </StackPane>
-      <StackPane layoutX="-1.0" layoutY="749.0" prefHeight="15.0" prefWidth="1101.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <ProgressBar fx:id="progress2" layoutY="547.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="15.0" prefWidth="1110.0" progress="0.0" stylesheets="@gradientprogressbar.css" StackPane.alignment="BOTTOM_CENTER" />
-            <Label fx:id="labelstatus2" alignment="CENTER" contentDisplay="TOP" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="15.0" prefWidth="1104.0" textAlignment="CENTER" StackPane.alignment="CENTER">
-               <font>
-                  <Font name="Calibri Bold" size="13.0" />
-               </font>
-            </Label>
-         </children>
-      </StackPane>
-      <Label fx:id="labelmaintitle" alignment="CENTER" layoutX="105.0" layoutY="75.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#acaoLabelMainTitle" prefHeight="74.0" prefWidth="593.0" style="-fx-font-size: 50;" styleClass="loginlabel" stylesheets="@fxmlFont1.css" text="DexCraft Launcher" textAlignment="CENTER" textFill="WHITE">
+      <ProgressBar fx:id="mainWindowPBar1" focusTraversable="false" layoutX="-1.0" layoutY="506.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="14.0" prefWidth="751.0" stylesheets="@gradientprogressbar.css" />
+		<Label fx:id="mainWindowProgressOverall" alignment="CENTER" contentDisplay="TOP" layoutX="-1.0" layoutY="504.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="16.0" prefWidth="751.0" textFill="#000e7c">
+         <font>
+            <Font name="Segoe UI Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="mainWindowTitle" alignment="CENTER" layoutX="76.0" layoutY="64.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#doCallEasterEgg" prefHeight="74.0" prefWidth="593.0" style="-fx-font-size: 50;" styleClass="loginlabel" stylesheets="@fxmlFont1.css" text="DexCraft Launcher" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="MS Outlook" size="63.0" />
          </font>
          <cursor>
-            <Cursor fx:constant="HAND" />
+            <Cursor fx:constant="OPEN_HAND" />
          </cursor>
+         <effect>
+            <DropShadow />
+         </effect>
       </Label>
-      <ImageView fx:id="mainWindowServerIcon" fitHeight="122.0" fitWidth="122.0" layoutX="341.0" layoutY="178.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="mainWindowServerIcon" fitHeight="106.0" fitWidth="116.0" layoutX="320.0" layoutY="207.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@icon1.jpg" />
+         </image></ImageView>
+      <Label fx:id="mainWindowLabelMS" alignment="CENTER_RIGHT" layoutX="691.0" layoutY="28.0" prefHeight="15.0" prefWidth="39.0" text="0ms" textFill="WHITE">
+         <font>
+            <Font name="Segoe UI Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="mainWindowLabelPing" layoutX="730.0" layoutY="24.0" prefHeight="23.0" prefWidth="23.0">
+         <graphic>
+            <ImageView fx:id="mainWindowIconPing" fitHeight="23.0" fitWidth="23.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@green1.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Label>
 	</children>
 </AnchorPane>

@@ -10,6 +10,7 @@ import javafx.application.Application;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -20,17 +21,24 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.dex.dexcraft.commons.Commons;
 import net.dex.dexcraft.commons.check.OfflineMode;
+import net.dex.dexcraft.commons.dto.FtpDTO;
+import net.dex.dexcraft.commons.dto.SqlDTO;
+import net.dex.dexcraft.commons.dto.UrlsDTO;
+import net.dex.dexcraft.commons.dto.VersionsDTO;
 import net.dex.dexcraft.commons.tools.Close;
 import net.dex.dexcraft.commons.tools.DexCraftFiles;
 import net.dex.dexcraft.commons.tools.DexUI;
 import net.dex.dexcraft.commons.tools.ErrorAlerts;
 import net.dex.dexcraft.commons.tools.Logger;
+import net.dex.dexcraft.launcher.client.services.MusicPlayerService;
+import net.dex.dexcraft.launcher.client.services.Validate;
 
 /**
   * @author Dex
   * @since 30/04/2020
-  * @version v11.0.0-201213-2416
+  * @version v11.0.0-201225-2643
   *
   * Preloader Class with splash screen.
   */
@@ -48,17 +56,25 @@ public class Client extends Application
 
   public static ErrorAlerts alerts = new ErrorAlerts();
   public static Logger logger = new Logger();
-  public static DexUI clientUI = new DexUI();
+  public static DexUI preloaderUI = new DexUI();
+
+  static String clientVersionForTitle = "";
 
 
   /**
    * Dynamic label change in UI with additional logging.
-   * @param text the text to be shown and logged.
+   * @param ui the DexUI instance
+   * @param mainLabelText the main label text (used to the logger aswell)
+   * @param secLabelText the secondary label text. It can't be null but can be empty.
    */
-  public static void changeStatus(String text)
+  public static void changeStatus(DexUI ui, String mainLabelText, String secLabelText)
   {
-    clientUI.changeMainLabel(text);
-    logger.log("INFO", text);
+    ui.changeMainLabel(mainLabelText);
+    if (!secLabelText.equals(""))
+    {
+      ui.changeSecondaryLabel(secLabelText);
+    }
+    logger.log("INFO", mainLabelText);
   }
 
   /**
@@ -69,7 +85,11 @@ public class Client extends Application
   @Override
   public void start(Stage primaryStage) throws Exception
   {
+    //Icon set for alerts's window
     alerts.setImage(new Image(Client.class.getResourceAsStream("icon1.jpg")));
+    //DexCraft Commons alerts binding
+    Commons.setErrorAlerts(alerts);
+
     FXMLLoader splashLoader = new FXMLLoader(Client.class.getResource("Preloader.fxml"));
     StackPane splashPane = splashLoader.load();
     preloaderStage = new Stage(StageStyle.TRANSPARENT);
@@ -84,14 +104,19 @@ public class Client extends Application
     preloaderStage.setResizable(false);
     pbar = new ProgressBar(0.0);
     preloaderLabel = new Label("Iniciando...");
+    preloaderLabel.getStyleClass().add("mainlabel");
+    preloaderLabel.setMaxSize(480, 20);
+    preloaderLabel.setTranslateY(135);
+    preloaderLabel.setAlignment(Pos.CENTER);
+    preloaderLabel.toFront();
+    pbar.setMaxSize(480, 11);
+    pbar.setTranslateY(150);
+    pbar.getStylesheets().add(getClass().getResource("gradientprogressbar2.css").toExternalForm());
+    pbar.toFront();
     splashPane.getChildren().add(preloaderLabel);
     splashPane.getChildren().add(pbar);
-    preloaderLabel.getStyleClass().add("mainlabel");
-    pbar.setMaxSize(606, 11);
-    pbar.setTranslateY(190);
-    pbar.getStylesheets().add(getClass().getResource("gradientprogressbar2.css").toExternalForm());
-    clientUI.setProgressBar(pbar);
-    clientUI.setMainLabel(preloaderLabel);
+    preloaderUI.setProgressBar(pbar);
+    preloaderUI.setMainLabel(preloaderLabel);
 
 
     /** Opens a Service to show Splash before initialize the application **/
@@ -120,53 +145,61 @@ public class Client extends Application
             logger.setMessageFormat("yyyy/MM/dd HH:mm:ss");
             logger.setLogNameFormat("yyyy-MM-dd--HH.mm.ss");
             logger.setLogDir(DexCraftFiles.logFolder);
+            //DexCraft Commons logger binding
+            Commons.setLogger(logger);
 
-            changeStatus("Iniciando...");
-            clientUI.changeProgress(true, 10, 30);
-            Thread musicPlayer = new Thread(new MusicPlayer());
+
+            changeStatus(preloaderUI, "Iniciando...", "");
+            preloaderUI.changeProgress(true, 10, 35);
+
+            // Starts music playback
+            Thread musicPlayer = new Thread(new MusicPlayerService());
             musicPlayer.setDaemon(true);
             musicPlayer.start();
 
+            preloaderUI.changeProgress(true, 20, 35);
+            changeStatus(preloaderUI, "Validando instância...", "");
+
+            // Validates current instance
             Validate.instance("Client");
 
-            clientUI.changeProgress(true, 20, 30);
+            preloaderUI.changeProgress(true, 30, 35);
+            changeStatus(preloaderUI, "Coletando dados...", "");
 
+            //Read URLs for downloads and updates
+            UrlsDTO.parseURLs();
+
+            preloaderUI.changeProgress(true, 40, 35);
+
+            // Do tasks below only if launcher isn't on Offline Mode
             if(!OfflineMode.IsRunning())
             {
-              clientUI.changeProgress(true, 30, 30);
-              changeStatus("Verificando versão do DexCraft Launcher Init...");
+              changeStatus(preloaderUI, "Verificando versão do DexCraft Launcher Init...", "");
 
-              Validate.provisionedComponent(DexCraftFiles.coreFile, DexCraftFiles.launcherProperties, "DexCraft Launcher Init",
-                       "DexCraftLauncherInitVersion", "Versions", "LauncherProperties", "LauncherUpdates", "InitUpdate",
-                       DexCraftFiles.tempFolder, DexCraftFiles.updateInitZip, DexCraftFiles.launcherFolder);
-              clientUI.changeProgress(true, 40, 30);
+              // Check and update Init version if needed
+              Validate.provisionedComponent(preloaderUI, "Init", 50);
 
-              Validate.connectionAssets();
+              changeStatus(preloaderUI, "Verificando banco de dados...", "");
+
+              // Read the connection assets from JSON properties file
+              SqlDTO.parseSQLAssets();
+
+              preloaderUI.changeProgress(true, 60, 35);
+              changeStatus(preloaderUI, "Verificando comunicação com Servidor FTP...", "");
+
+              // Read the connection assets from JSON properties file
+              FtpDTO.parseFTPAssets();
+
+              preloaderUI.changeProgress(true, 70, 35);
             }
-            clientUI.changeProgress(true, 50, 30);
+            preloaderUI.changeProgress(true, 80, 35);
 
-            Validate.versions();
+            clientVersionForTitle = VersionsDTO.getDexCraftLauncherClientVersion().substring(0, VersionsDTO.getDexCraftLauncherClientVersion().indexOf("-"));
 
-            clientUI.changeProgress(true, 70, 30);
-            if(!DexCraftFiles.coreFile.exists())
-            {
-              logger.log("***ERRO***", "COREFILE NÃO ENCONTRADO.");
-              alerts.noCoreFile();
-            }
-
-            Validate.setOfflineMode();
-
-            clientUI.changeProgress(true, 80, 30);
-
-            Validate.getLastServer();
-
-            clientUI.changeProgress(true, 90, 30);
-
-            Validate.getLastUser();
-
-            changeStatus("Abrindo DexCraft Launcher...");
-            clientUI.changeProgress(true, 100, 30);
-            logger.log("INFO", "Splash Screen terminada");
+            preloaderUI.changeProgress(true, 90, 35);
+            changeStatus(preloaderUI, "Abrindo DexCraft Launcher...", "");
+            preloaderUI.changeProgress(true, 100, 35);
+            logger.log("INFO", "JAVAFX: Splash Screen terminada");
             return true;
           }
         };
@@ -178,13 +211,17 @@ public class Client extends Application
       {
         preloaderStage.close();
         setParent("LoginScreen");
-        logger.log("INFO", "Janela de login aberta");
+        logger.log("INFO", "JAVAFX: Janela de login aberta");
       }
     };
     splashService.start();
   }
 
-
+  /**
+   * Define the current Parent according to<br>
+   * desired Stage to show on current Scene.
+   * @param fxml the FXML file from the Controller.
+   */
   public static void setParent(String fxml)
   {
     try
@@ -194,13 +231,14 @@ public class Client extends Application
       switchAnchorPane = load.load();
       switchScene = new Scene(switchAnchorPane);
       switchScene.getStylesheets().add(Client.class.getResource("fxmlFont1.css").toExternalForm());
+
       switchStage = new Stage();
       if (fxml.equals("AboutWindow"))
       {
         switchStage.setTitle("Sobre DexCraft Launcher");
         switchStage.setOnCloseRequest((e) ->
         {
-          logger.log("INFO", "Janela " + fxml + " encerrada.");
+          logger.log("INFO", "JAVAFX: Janela " + fxml + " encerrada.");
           switchStage.close();
         });
       }
@@ -208,19 +246,23 @@ public class Client extends Application
       {
         switchStage.setOnCloseRequest((e) ->
         {
-          logger.log("INFO", "Janela " + fxml + " encerrada.");
+          logger.log("INFO", "JAVAFX: Janela " + fxml + " encerrada.");
           switchStage.close();
-          Close.close(1);
+          Close.quit();
         });
       }
       if (fxml.equals("LoginScreen"))
       {
-        switchStage.setTitle("DexCraft Launcher - Login");
+        switchStage.setTitle("DexCraft Launcher " + clientVersionForTitle + " - Login");
+      }
+      else if (fxml.equals("MainWindow"))
+      {
+        switchStage.setTitle("DexCraft Launcher " + clientVersionForTitle);
       }
       switchStage.getIcons().add(new Image(Client.class.getResourceAsStream("icon1.jpg")));
       switchStage.setScene(switchScene);
       switchStage.setResizable(false);
-      logger.log("INFO", "Abrindo janela " + fxml + "...");
+      logger.log("INFO", "JAVAFX: Abrindo janela " + fxml + "...");
       switchStage.show();
     }
     catch (IOException e)
