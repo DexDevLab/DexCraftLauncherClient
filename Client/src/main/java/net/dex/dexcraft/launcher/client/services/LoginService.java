@@ -93,19 +93,21 @@ public class LoginService extends Task<Void>
       LoginScreenController.loginCode = validateFields(this.user, this.pass);
       if (LoginScreenController.loginCode == 0)
       {
-        LoginScreenController.serviceName = "LoginValidation";
-        LoginService loginValidationService = new LoginService();
-        new Thread(loginValidationService).start();
-        while (LoginScreenController.serviceName.equals("LoginValidation"))
+        if (!SessionDTO.isOfflineModeOn())
         {
-          try
+          LoginScreenController.serviceName = "LoginValidation";
+          LoginService loginValidationService = new LoginService();
+          new Thread(loginValidationService).start();
+          while (LoginScreenController.serviceName.equals("LoginValidation"))
           {
-            Thread.sleep(500);
-//            logger.log("INFO", "Aguardando finalização da Thread Login Validation...");
-          }
-          catch (InterruptedException ex)
-          {
-            alerts.exceptionHandler(ex, "EXCEÇÃO EM LoginServices.LoginVerification()");
+            try
+            {
+              Thread.sleep(500);
+            }
+            catch (InterruptedException ex)
+            {
+              alerts.exceptionHandler(ex, "EXCEÇÃO EM LoginServices.LoginVerification()");
+            }
           }
         }
       }
@@ -249,6 +251,7 @@ public class LoginService extends Task<Void>
         default:
           logger.log("INFO", "LOGIN: Campos validados e login realizado.");
           LoginScreenController.errorAttempts = 0;
+          Validate.gameCache(loginUI, user);
           SessionDTO.setSessionUser(user);
           pass = Crypto.encrypt(pass);
           SessionDTO.setSessionPassword(pass);
@@ -358,19 +361,9 @@ public class LoginService extends Task<Void>
     {
       callDatabaseConnector();
       db.createTable();
-      db.insertPlayer(user, pass, generateTimestamp());
+      db.insertPlayer(user, pass);
       db.disconnect();
       return 0;
-    }
-
-    /**
-     * Generate timestamp based on current time in miliseconds
-     * to create a savepoint on account.
-     * @return the timestamp.
-     */
-    public String generateTimestamp()
-    {
-      return Long.toString(System.currentTimeMillis());
     }
 
     /**

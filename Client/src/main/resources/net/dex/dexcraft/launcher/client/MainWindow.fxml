@@ -191,7 +191,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Label fx:id="mainWindowTaskStatus" alignment="CENTER" layoutX="1.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="29.0" prefWidth="800.0" textAlignment="CENTER" textFill="#050068" wrapText="true" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
+      <Label fx:id="mainWindowTaskStatus" alignment="CENTER" layoutX="1.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="29.0" prefWidth="800.0" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
          <font>
             <Font name="Segoe UI Bold" size="14.0" />
          </font>
@@ -202,7 +202,7 @@
          </font>
       </Label>
       <ProgressBar fx:id="mainWindowPBar1" focusTraversable="false" layoutX="-1.0" layoutY="506.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="14.0" prefWidth="751.0" stylesheets="@gradientprogressbar.css" />
-		<Label fx:id="mainWindowProgressOverall" alignment="CENTER" contentDisplay="TOP" layoutX="-1.0" layoutY="504.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="16.0" prefWidth="751.0" textFill="#000e7c">
+		<Label fx:id="mainWindowProgressOverall" alignment="CENTER" contentDisplay="TOP" layoutX="-1.0" layoutY="504.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" mouseTransparent="true" prefHeight="16.0" prefWidth="751.0" textFill="#050068">
          <font>
             <Font name="Segoe UI Bold" size="12.0" />
          </font>

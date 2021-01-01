@@ -44,7 +44,7 @@ public class MusicPlayerService extends Thread
     }
     else
     {
-      logger.log("ERRO", "BACKGROUND PLAYER: NÃO É POSSÍVEL ENCONTRAR ARQUIVOS DE MÍDIA NO DIRETÓRIO DE RECURSOS.");
+      logger.log("***ERRO***", "BACKGROUND PLAYER: NÃO É POSSÍVEL ENCONTRAR ARQUIVOS DE MÍDIA NO DIRETÓRIO DE RECURSOS.");
     }
     logger.log("INFO", "Encerrando Thread MusicPlayer...");
   }

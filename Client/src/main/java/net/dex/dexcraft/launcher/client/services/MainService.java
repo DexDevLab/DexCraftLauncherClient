@@ -98,48 +98,6 @@ public class MainService extends Task<Void>
     // Verify Game Patch version
     isReady = Validate.provisionedComponent(ui, componentName, 0);
     waitService();
-    isReady = false;
-    // Changes the component name, according to the selected server
-    //  index, to match properly with the FTP directory name
-    //  0 - DexCraft Factions Game Patch
-    //  1 - DexCraft Pixelmon Game Patch
-    //  2 - DexCraft Vanilla Game Patch
-    //  3 - DexCraft Beta Game Patch
-    //
-
-//    switch (serverIndex)
-//    {
-//      case 0:
-//        componentName = "dc";
-//        break;
-//      case 1:
-//        componentName = "dcpx";
-//        break;
-//      case 2:
-//        componentName = "dcvn";
-//        break;
-//      case 3:
-//        componentName = "dcb";
-//        break;
-//      default:
-//        break;
-//    }
-//    AccountSyncService sync = new AccountSyncService();
-//    sync.setUI(ui);
-//    sync.setComponentName(componentName);
-//    new Thread(sync).start();
-    waitService();
-//    while (sync.isRunning())
-//    {
-//      try
-//      {
-//        Thread.sleep(1000);
-//      }
-//      catch (InterruptedException ex)
-//      {
-//        logger.log(ex,"EXCEÇÃO em MainService.mainRoutine()");
-//      }
-//    }
     Platform.runLater(() ->
     {
       ui.setMainButtonDisable(false);
@@ -151,17 +109,23 @@ public class MainService extends Task<Void>
     });
   }
 
+
   /**
    * Simple method to make a waiter to service.
    */
   public void waitService()
   {
+    int i = 0;
     while (!isReady)
     {
       try
       {
         Thread.sleep(1000);
-        logger.log("INFO", "SERVIÇO: Aguardando status do Serviço...");
+        if (i == 0)
+        {
+          logger.log("INFO", "SERVIÇO: Aguardando status do Serviço...");
+          i++;
+        }
       }
       catch (InterruptedException ex)
       {
@@ -169,6 +133,4 @@ public class MainService extends Task<Void>
       }
     }
   }
-
-
 }

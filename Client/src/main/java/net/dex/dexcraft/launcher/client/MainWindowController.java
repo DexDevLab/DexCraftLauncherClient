@@ -20,12 +20,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import static net.dex.dexcraft.commons.Commons.logger;
 import net.dex.dexcraft.commons.dto.SessionDTO;
 import net.dex.dexcraft.commons.tools.DexUI;
 import static net.dex.dexcraft.launcher.client.Client.switchStage;
+import net.dex.dexcraft.launcher.client.services.AccountSyncService;
 import net.dex.dexcraft.launcher.client.services.BgImageRandomService;
 import net.dex.dexcraft.launcher.client.services.MainService;
 import net.dex.dexcraft.launcher.client.services.PingService;
+import net.dex.dexcraft.launcher.client.services.PrepareLauncherService;
 import net.dex.dexcraft.launcher.client.services.Validate;
 
 
@@ -192,7 +195,11 @@ public class MainWindowController implements Initializable
 
   public static DexUI mainUI = new DexUI();
 
+  public static String serviceName = "";
+
   public static int serverIndex = 0;
+
+  public static boolean isAccountSyncDone = false;
 
 
   /**
@@ -208,8 +215,7 @@ public class MainWindowController implements Initializable
     }
     catch (IOException ex)
     {
-      // IGNORED
-//      alerts.exceptionHandler(ex, "EXCEÇÃO em MainWindowController.doCallEasterEgg(MouseEvent)");
+      logger.log(ex, "EXCEÇÃO em MainWindowController.doCallEasterEgg(MouseEvent)");
     }
   }
 
@@ -350,7 +356,8 @@ public class MainWindowController implements Initializable
   @FXML
   void doPlay(ActionEvent event)
   {
-    
+    serviceName = "PlayGame";
+    callAccountSyncService();
   }
 
   /**
@@ -362,6 +369,7 @@ public class MainWindowController implements Initializable
   {
     // TODO
   }
+
 
   /**
    * Initializes the controller class.
@@ -407,6 +415,24 @@ public class MainWindowController implements Initializable
   }
 
   /**
+   * Calls the Account Sync Service.
+   */
+  public void callAccountSyncService()
+  {
+    AccountSyncService account = new AccountSyncService();
+    account.setUI(mainUI);
+    new Thread(account).start();
+    callPrepareLauncherService(serviceName);
+  }
+
+  public void callPrepareLauncherService(String serviceName)
+  {
+    PrepareLauncherService prepare = new PrepareLauncherService();
+    prepare.setUI(mainUI);
+    new Thread(prepare).start();
+  }
+
+  /**
    * Calls the Main Service.
    */
   private void callMainService()
@@ -420,6 +446,7 @@ public class MainWindowController implements Initializable
     main.setUI(mainUI);
     new Thread(main).start();
   }
+
 
   /**
    * Calls the Background Randomizer Service.

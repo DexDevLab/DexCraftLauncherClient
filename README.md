@@ -1,4 +1,5 @@
 
+
 # License
 This program and its files, its codes, implementation and functions are under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3.
 
@@ -284,4 +285,52 @@ Gladly back to Github!
 	* MainService.java:
 		*  Main service, verifies patches, installations and validates them.
 	* PingService.java:
-		* Monitors latency with the servers and show to user.         
+		* Monitors latency with the servers and show to user.  
+## v11.0.0-210101-2712
+* DexCraft Commons:
+	* JsonDAO.java:
+		* Changed log format to match correctly to the logger class requirements.
+	* SqlDAO.java:
+		* Removed the timestamp value of the table. I got the conclusion that having the backup timestamp in the database table is a wrong idea.
+	* SystemDTO.java:
+		* Added the GET, SET and PARSE methods to the backup directives.
+	* DexCraftFiles.java:
+		* Added local session cache folder variable.
+		* Added binaries folder variable which will contain 3rd party programs
+		* Added the runtime folder variable which contain files needed to the internal launcher (Shiginima Launcher)
+		* Changed the variable which validates DexCraft Factions Client to use the files in runtime folder as reference.
+		* Changed the variable which validates DexCraft Pixelmon Client to use the files in runtime folder as reference.
+		* Changed the variable which validates DexCraft Vanilla Client to use the files in runtime folder as reference.
+		* Changed the variable which validates DexCraft Beta Client to use the files in runtime folder as reference.
+		* Added a variable of the syncproperties.json, a special file which will contain all the game clients timestamps.
+		* Added a variable to the temporary folder for ftp syncronization.
+	* DexUI.java:
+		* Reduced animation latency of the progress bar.
+		* Added method to retrieve button.
+	* FileIO.java:
+		* Changed algorithm logic to determine file presence in a better precise way.
+	* FtpDAO.java:
+		* Name changed to FtpUtils to reflect its practical use.
+	* FtpUtils.java:
+		* Created.   
+	* Install.java:
+		* Changed patching process to fix problems on finding the file to be manipulated.
+* DexCraft Launcher Client:
+	* MainWindowController.java:
+		* Created event to validate and syncronize account with FTP Server.
+		* Created event to prepate internal launcher's assets and run the launcher.
+	* MainWindow.fxml:
+		* Changed font color to some labels.  
+* DexCraft Launcher Client Services:
+	* AccountSyncService.java:
+		* Created. This Service will validate the account data according to the FTP Server's timestamp, and will be used to another client-server operations.
+	* LoginService.java:
+		* Refactored and changed to better suit to the program needs.     
+	* MainService.java:
+		* Changed waiter method.
+	* MusicPlayerService.java:
+		* Changed log format to match correctly to the logger class requirements.
+	* PrepareLauncherService.java:
+		*Created. This Service will prepare the internal launcher assets to run the launcher and will apply profile settings to the player.
+	* Validate.java:
+		* Code refactoring for better readability.    
