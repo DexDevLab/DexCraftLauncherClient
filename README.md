@@ -365,3 +365,7 @@ Gladly back to Github!
 * DexCraft Launcher Client Services:
 	* MusicPlayerService.java:
 		* Implemented persistence thread for Music Player Server interruption
+## v11.0.2-210106-2730
+* DexCraft Commons:
+	* OfflineMode.java:
+		* Changed website test to DexCloud server address to better compatibility.
