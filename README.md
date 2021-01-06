@@ -358,4 +358,10 @@ Gladly back to Github!
 	* MusicPlayerService.java:
 		* Fixed bug where the Music Player Service keeps running even with the Launcher finished.
 	* PrepareLauncherService.java:
-		* Fixed bug where the servers.dat wasn't loaded to the profile.   
+		* Fixed bug where the servers.dat wasn't loaded to the profile.
+## v11.0.1-210106-2729
+* DexCraft Commons:
+	* Added ignored status to file verification and file deletion
+* DexCraft Launcher Client Services:
+	* MusicPlayerService.java:
+		* Implemented persistence thread for Music Player Server interruption

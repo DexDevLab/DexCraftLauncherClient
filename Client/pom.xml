@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.dex.dexcraft.launcher</groupId>
   <artifactId>Client</artifactId>
-  <version>11.0.0-210105-2728</version>
+  <version>11.0.1-210106-2729</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>

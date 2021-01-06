@@ -47,7 +47,24 @@ public class MusicPlayerService extends Thread
           alerts.exceptionHandler(ex, "EXCEÇÃO EM BackgroundPlayer.run()");
         }
       }
-      while (DexCraftFiles.playerLock.exists())
+      Thread persistence = new Thread(()->
+      {
+        while (DexCraftFiles.playerLock.exists())
+        {
+          try
+          {
+            Thread.sleep(1000);
+          }
+          catch (InterruptedException ex)
+          {
+            //ignored
+          }
+        }
+        System.exit(0);
+      });
+      persistence.start();
+      int loop = 0;
+      while (loop == 0)
       {
         int random = (new Random().nextInt(12))+1;
         musicFile = new File (DexCraftFiles.resFolder.toString() + "/sound/" + random + ".wav");
