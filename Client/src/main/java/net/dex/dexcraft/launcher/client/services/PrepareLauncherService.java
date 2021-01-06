@@ -14,6 +14,7 @@ import net.dex.dexcraft.commons.check.SystemRequirements;
 import net.dex.dexcraft.commons.dao.JsonDAO;
 import net.dex.dexcraft.commons.dto.SessionDTO;
 import net.dex.dexcraft.commons.dto.SystemDTO;
+import net.dex.dexcraft.commons.tools.Close;
 import net.dex.dexcraft.commons.tools.DexCraftFiles;
 import net.dex.dexcraft.commons.tools.DexUI;
 import net.dex.dexcraft.commons.tools.FileIO;
@@ -249,6 +250,7 @@ public class PrepareLauncherService extends Task<Void>
     editSpecificLine(shiginimaFile, "username.lastused:", "username.lastused: " + SessionDTO.getSessionUser());
     editSpecificLine(shiginimaFile, "theme.dark:", "theme.dark: true");
     editSpecificLine(shiginimaFile, "auto.name: ", "auto.name: " + SessionDTO.getSessionUser());
+    editSpecificLine(shiginimaFile, "language: ", "language: pt");
     editSpecificLine(shiginimaFile, "auto.language: ", "auto.language: false");
     editSpecificLine(shiginimaFile, "auto.enabled: ", "auto.enabled: true");
   }
@@ -359,12 +361,12 @@ public class PrepareLauncherService extends Task<Void>
       File shiginimaFile = new File(runtimeDir + "/shig.inima");
       editShiginimaAsset(shiginimaFile);
       ui.changeProgress(true, 80, 20);
-      if(SessionDTO.isOfflineModeOn())
+      if(!SessionDTO.isOfflineModeOn())
       {
         applySettingsProfile("serverdat");
       }
-//      try
-//      {
+      try
+      {
         logger.log("INFO", "PREPARELAUNCHER: Finalizando...");
         ui.changeMainLabel("Concluído!");
         ui.changeSecondaryLabel("Concluído");
@@ -372,14 +374,14 @@ public class PrepareLauncherService extends Task<Void>
         ui.changeMainLabel("");
         ui.changeSecondaryLabel("");
         ui.getProgressBar().setVisible(false);
-//        new ProcessBuilder("cmd", "/c", "javaw.exe -jar DexCraftBackgroundServices.jar").directory(DexCraftFiles.launcherFolder).start();
+        new ProcessBuilder("cmd", "/c", "javaw.exe -jar DexCraftBackgroundServices.jar").directory(DexCraftFiles.launcherFolder).start();
         logger.log("INFO", "PREPARELAUNCHER: DCBS inicializado." );
-//        Close.client();
-//      }
-//      catch (IOException ex)
-//      {
-//        alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().PrepareGameAndRun Thread");
-//      }
+        Close.client();
+      }
+      catch (IOException ex)
+      {
+        alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().PrepareGameAndRun Thread");
+      }
     }
   }
 

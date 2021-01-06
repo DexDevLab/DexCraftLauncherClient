@@ -13,6 +13,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import static net.dex.dexcraft.commons.Commons.alerts;
 import static net.dex.dexcraft.commons.Commons.logger;
 import net.dex.dexcraft.commons.tools.DexCraftFiles;
+import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -35,7 +36,18 @@ public class MusicPlayerService extends Thread
     logger.log("INFO", "Iniciando Thread MusicPlayer...");
     if (DexCraftFiles.resFolder.exists())
     {
-      while (DexCraftFiles.resFolder.exists())
+      if (!DexCraftFiles.playerLock.exists())
+      {
+        try
+        {
+          FileUtils.touch(DexCraftFiles.playerLock);
+        }
+        catch (IOException ex)
+        {
+          alerts.exceptionHandler(ex, "EXCEÇÃO EM BackgroundPlayer.run()");
+        }
+      }
+      while (DexCraftFiles.playerLock.exists())
       {
         int random = (new Random().nextInt(12))+1;
         musicFile = new File (DexCraftFiles.resFolder.toString() + "/sound/" + random + ".wav");

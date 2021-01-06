@@ -38,7 +38,7 @@ import net.dex.dexcraft.launcher.client.services.Validate;
 /**
   * @author Dex
   * @since 30/04/2020
-  * @version v11.0.0-210101-2712
+  * @version v11.0.0-210105-2728
   *
   * Preloader Class with splash screen.
   */
@@ -147,7 +147,6 @@ public class Client extends Application
             logger.setLogDir(DexCraftFiles.logFolder);
             //DexCraft Commons logger binding
             Commons.setLogger(logger);
-
 
             changeStatus(preloaderUI, "Iniciando...", "");
             preloaderUI.changeProgress(true, 10, 35);

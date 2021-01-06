@@ -333,4 +333,29 @@ Gladly back to Github!
 	* PrepareLauncherService.java:
 		*Created. This Service will prepare the internal launcher assets to run the launcher and will apply profile settings to the player.
 	* Validate.java:
-		* Code refactoring for better readability.    
+		* Code refactoring for better readability.
+## v11.0.0-210105-2728
+* DexCraft Commons:
+	* AdminExecution.java:
+		* Logger calls removed since in Init, the Admin Execution utility is called before logging initialization.
+	* PreventSecondInstance.java:
+		* Fixed bug where starting Client at first time marks as another instance was running already.
+	* SystemRequirements.java:
+		* Fixed bug where Init couldn't load System Requirements since it was needing CoreFile in the constructor.
+	* SystemDTO.java:
+		* Added DexCraft Background Services assets variable.
+	* VersionsDTO.java:
+		* Fixed bug where the Client version wasn't updating.  
+	* Close.java:
+		* Added exit call to closing methods.
+	* DexCraftFiles.java:
+		* Added lock file to stop Launcher music player.
+	* FtpUtils.java:
+		* Added method for preventing accidental losing of previous file in folder while uploading a new one.
+* DexCraft Launcher Client Services:
+	* AccountSyncService.java:
+		* Added local backup validation
+	* MusicPlayerService.java:
+		* Fixed bug where the Music Player Service keeps running even with the Launcher finished.
+	* PrepareLauncherService.java:
+		* Fixed bug where the servers.dat wasn't loaded to the profile.   

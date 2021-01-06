@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.dex.dexcraft.launcher</groupId>
   <artifactId>Client</artifactId>
-  <version>11.0.0-201225-2643</version>
+  <version>11.0.0-210105-2728</version>
   <build>
     <finalName>DexCraftLauncher</finalName>
     <plugins>

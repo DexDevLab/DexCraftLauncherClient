@@ -68,25 +68,25 @@ public class AccountSyncService extends Task<Void>
     {
       serviceName = "Verify";
     }
+    switch (SessionDTO.getLastServer())
+    {
+      case "0":
+        component = "dc";
+        break;
+      case "1":
+        component = "dcpx";
+        break;
+      case "2":
+        component = "dcvn";
+        break;
+      case "3":
+        component = "dcb";
+        break;
+      default:
+        break;
+    }
     if (!SessionDTO.isOfflineModeOn())
     {
-      switch (SessionDTO.getLastServer())
-      {
-        case "0":
-          component = "dc";
-          break;
-        case "1":
-          component = "dcpx";
-          break;
-        case "2":
-          component = "dcvn";
-          break;
-        case "3":
-          component = "dcb";
-          break;
-        default:
-          break;
-      }
       ftp.setAddress(FtpDTO.getFtpAddress());
       ftp.setPort(FtpDTO.getFtpPort());
       ftp.setUser(FtpDTO.getFtpUser());
@@ -116,6 +116,47 @@ public class AccountSyncService extends Task<Void>
       ui.changeProgress(true, 100, 30);
       ui.getProgressBar().setVisible(false);
       ui.setMainButtonDisable(false);
+    }
+    else
+    {
+      ui.changeMainLabel("Aguarde...");
+      ui.changeSecondaryLabel("Verificando backup local...");
+      ui.resetProgress();
+      ui.changeProgress(true, -1, 30);
+      if (localSyncProps.exists())
+      {
+        JsonDAO json = new JsonDAO();
+        String timestamp = json.readValue(localSyncProps, component.toUpperCase(), "BackupTimestamp");
+        if (timestamp.equals("0"))
+        {
+          File gameCache = new File(DexCraftFiles.gameCache.toString() + "/" + SessionDTO.getSessionUser() + "/" + component + ".7z");
+          if (gameCache.exists())
+          {
+            Thread restoreTask = new Thread(()->
+            {
+              Validate.restoreCache(SessionDTO.getSessionUser(), component);
+            });
+            restoreTask.start();
+            String statusMsg = "";
+            while (restoreTask.isAlive())
+            {
+              if(!ZipUtils.statusMessage.equals(statusMsg))
+              {
+                ui.changeSecondaryLabel(ZipUtils.statusMessage);
+              }
+              try
+              {
+                Thread.sleep(100);
+              }
+              catch (InterruptedException ex)
+              {
+                logger.log(ex,"EXCEÇÃO em Validate.gameCache(DexUI, String)");
+              }
+              statusMsg = ZipUtils.statusMessage;
+            }
+          }
+        }
+      }
     }
     MainWindowController.isAccountSyncDone = true;
     logger.log("INFO", "SERVIÇO: Finalizando o Serviço " + "AccountSyncService" + "...");
@@ -416,6 +457,7 @@ public class AccountSyncService extends Task<Void>
     FileIO fio = new FileIO();
     fio.copiar(DexCraftFiles.syncPropsRoot, tempSyncProps);
   }
+
 
   /**
    * Prepare files to perform backup or restore.
