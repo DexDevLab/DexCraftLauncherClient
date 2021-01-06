@@ -369,3 +369,21 @@ Gladly back to Github!
 * DexCraft Commons:
 	* OfflineMode.java:
 		* Changed website test to DexCloud server address to better compatibility.
+## v11.0.3-210106-2732
+* DexCraft Commons:
+	* OfflineMode.java:
+		* Changed connection test method (only for testing)
+	* Close.java:
+		* Changed exclusion method of cache files
+	* Connections.java:
+		* Exception of Connections.getPing() ignored
+		* Added different result in case of connection failure
+	* ErrorAlerts.java:
+		* Changed behaviour of the Exception Handler Alert to perform program closing properly
+	* DexUI.java:
+		* Changed opacity transition to make it faster.
+* DexCraft Launcher Client Services:
+	* AccountSyncService.java:
+		* Added snippet to clone syncProps file in case of new account.
+	* PrepareLauncherService.java:
+		* Reduced sleep interval to reduce button release after account verification.

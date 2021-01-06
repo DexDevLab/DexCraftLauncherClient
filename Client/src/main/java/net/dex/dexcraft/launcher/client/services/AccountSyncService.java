@@ -383,6 +383,11 @@ public class AccountSyncService extends Task<Void>
    */
   public void checkRemoteSyncProps()
   {
+    if (!localSyncProps.exists())
+    {
+      FileIO fio = new FileIO();
+      fio.copiar(DexCraftFiles.syncPropsRoot, localSyncProps);
+    }
     if (!tempSyncPropsIsDownloaded)
     {
       ui.changeMainLabel("Verificando...");

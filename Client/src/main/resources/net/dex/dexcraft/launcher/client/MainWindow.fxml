@@ -191,7 +191,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Label fx:id="mainWindowTaskStatus" alignment="CENTER" layoutX="1.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="29.0" prefWidth="800.0" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
+      <Label fx:id="mainWindowTaskStatus" alignment="CENTER" layoutX="1.0" layoutY="475.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mouseTransparent="true" prefHeight="29.0" prefWidth="800.0" textAlignment="CENTER" textFill="WHITE" wrapText="true" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
          <font>
             <Font name="Segoe UI Bold" size="14.0" />
          </font>

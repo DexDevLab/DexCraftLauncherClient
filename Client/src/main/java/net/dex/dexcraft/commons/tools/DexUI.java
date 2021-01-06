@@ -329,7 +329,7 @@ public class DexUI
 
     private void doHandle()
     {
-      IMAGE_OPACITY -= 0.01;
+      IMAGE_OPACITY -= 0.02;
       getMainImageView().opacityProperty().set(IMAGE_OPACITY );
       if (IMAGE_OPACITY <= 0)
       {
@@ -358,7 +358,7 @@ public class DexUI
 
     private void doHandle()
     {
-      IMAGE_OPACITY += 0.01;
+      IMAGE_OPACITY += 0.02;
       getMainImageView().opacityProperty().set(IMAGE_OPACITY );
       if (IMAGE_OPACITY >= 1.0)
       {
