@@ -3,10 +3,15 @@ package net.dex.dexcraft.launcher.client.services;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javafx.concurrent.Task;
 import static net.dex.dexcraft.commons.Commons.alerts;
 import static net.dex.dexcraft.commons.Commons.logger;
@@ -14,11 +19,17 @@ import net.dex.dexcraft.commons.check.SystemRequirements;
 import net.dex.dexcraft.commons.dao.JsonDAO;
 import net.dex.dexcraft.commons.dto.SessionDTO;
 import net.dex.dexcraft.commons.dto.SystemDTO;
+import net.dex.dexcraft.commons.dto.UrlsDTO;
 import net.dex.dexcraft.commons.tools.Close;
 import net.dex.dexcraft.commons.tools.DexCraftFiles;
 import net.dex.dexcraft.commons.tools.DexUI;
+import net.dex.dexcraft.commons.tools.Download;
 import net.dex.dexcraft.commons.tools.FileIO;
+import net.dex.dexcraft.commons.tools.Install;
 import net.dex.dexcraft.launcher.client.MainWindowController;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONObject;
 
@@ -36,6 +47,10 @@ public class PrepareLauncherService extends Task<Void>
 
   public DexUI ui;
   public String component;
+
+  public String resourcePackToKeep = "";
+  public File pack;
+  public String packUrl;
 
   /**
    * SET the User Interface instance for using on service.
@@ -68,7 +83,7 @@ public class PrepareLauncherService extends Task<Void>
     {
       try
       {
-        Thread.sleep(400);
+        Thread.sleep(1000);
       }
       catch (InterruptedException ex)
       {
@@ -115,25 +130,34 @@ public class PrepareLauncherService extends Task<Void>
         Thread thread = new Thread(new PrepareGameAndRun());
         thread.setDaemon(true);
         thread.start();
-        while (!serviceName.equals("null"))
-        {
-          try
-          {
-            Thread.sleep(1000);
-          }
-          catch (InterruptedException ex)
-          {
-            // Thread interruption ignored
-    //        alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().mainRoutine()");
-          }
-        }
         break;
-      case "":
-
+      case "ChangeSkin":
+        // Runs Thread to install a specific skin
+        Thread thread2 = new Thread(new ChangeSkin());
+        thread2.setDaemon(true);
+        thread2.start();
+        break;
+      case "InstallSoundDCPXChocoboV2":
+        // Runs Thread to install a specific skin
+        Thread thread3 = new Thread(new InstallResourcePack());
+        thread3.setDaemon(true);
+        thread3.start();
         break;
       default:
         alerts.tryAgain();
         break;
+    }
+    while (!serviceName.equals("null"))
+    {
+      try
+      {
+        Thread.sleep(500);
+      }
+      catch (InterruptedException ex)
+      {
+        // Thread interruption ignored
+//        alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().mainRoutine()");
+      }
     }
   }
 
@@ -382,6 +406,436 @@ public class PrepareLauncherService extends Task<Void>
       {
         alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().PrepareGameAndRun Thread");
       }
+    }
+  }
+
+
+  /**
+   * Install a specific skin to the player account
+   */
+  public class ChangeSkin extends Thread
+  {
+
+    /**
+     * Main method.
+     */
+    @Override
+    public void run()
+    {
+      installSkin();
+      ui.changeMainLabel("");
+      ui.changeSecondaryLabel("");
+      ui.getProgressBar().setVisible(false);
+      ui.getMainButton().setDisable(false);
+      ui.getMenuBar().setDisable(false);
+      MainWindowController.isAccountSyncDone = false;
+      serviceName = null;
+    }
+  }
+
+
+  /**
+   * Install a specific resource pack to the profile.
+   */
+  public class InstallResourcePack extends Thread
+  {
+    /**
+     * Main method.
+     */
+    @Override
+    public void run()
+    {
+      ui.changeProgress(true, 10, 20);
+      ui.changeMainLabel("Aguarde...");
+      ui.changeSecondaryLabel("Verificando...");
+
+      if (serviceName.equals("InstallSoundDCPXChocoboV2"))
+      {
+        pack = new File(DexCraftFiles.soundDCPXChocoboV2.toString());
+        packUrl = UrlsDTO.getSoundDCPXChocoboV2();
+      }
+      ui.changeProgress(true, 30, 20);
+      File resourcePackFolder = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resourcepacks");
+      if (!pack.exists())
+      {
+        ui.resetProgress();
+        ui.changeMainLabel("Baixando soundpack...");
+
+        Download download = new Download();
+        Thread downloadThread = new Thread(()->
+        {
+          download.zipResource(packUrl,resourcePackFolder, pack);
+        });
+        while (downloadThread.isAlive())
+        {
+          ui.changeProgress(true, Double.parseDouble(download.getProgressPercent().replace(",",".")), 20);
+          ui.changeSecondaryLabel(download.getTimeEstimatedMsg());
+          try
+          {
+            Thread.sleep(1000);
+          }
+          catch (InterruptedException ex)
+          {
+            // ignored
+          }
+        }
+
+        ui.changeProgress(true, 100, 20);
+        ui.changeSecondaryLabel("Concluído!");
+      }
+      installResourcePack(pack.getName(), true);
+      ui.changeMainLabel("");
+      ui.changeSecondaryLabel("");
+      ui.getProgressBar().setVisible(false);
+      ui.getMainButton().setDisable(false);
+      ui.getMenuBar().setDisable(false);
+      serviceName = null;
+    }
+  }
+
+
+  /**
+   * Parse currently installed resourcePacks and export it
+   * to a file.
+   */
+  public void parseResourcePacks()
+  {
+    try
+    {
+      File optionsTxt = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/options.txt");
+      if (!optionsTxt.exists())
+      {
+        SystemRequirements req = new SystemRequirements();
+        int ramMB = req.checkSystemRAMGB() * 1000;
+        if (ramMB >= Integer.parseInt(SystemDTO.getReqsMaximumRAM()))
+        {
+          applySettingsProfile("max");
+        }
+        else if (ramMB >= Integer.parseInt(SystemDTO.getReqsMediumRAM()))
+        {
+          applySettingsProfile("med");
+        }
+        else
+        {
+          applySettingsProfile("min");
+        }
+      }
+      List<String> readList = FileUtils.readLines(optionsTxt, "UTF-8");
+      readList.forEach((item)->
+      {
+        if (item.contains("resourcePacks:"))
+        {
+          try
+          {
+            item = item.substring(14);
+            item = item.replace("[", "");
+            item = item.replace("]", "");
+            String[] resourcePackResult = item.split(",");
+            File parseResources = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resources.dc");
+            if (parseResources.exists())
+            {
+              FileUtils.deleteQuietly(parseResources);
+            }
+            FileUtils.touch(parseResources);
+            List<String> output = new ArrayList<>();
+            for (String result : resourcePackResult)
+            {
+              if (result.contains(" \""))
+              {
+                result = result.substring(1);
+              }
+              if ((result.contains("default.zip")) || (result.contains("16x")) || (result.contains("512x")))
+              {
+                output.add("TexturePack: " + result);
+              }
+              else
+              {
+                output.add("SoundPack: " + result);
+              }
+            }
+            output.forEach((item2)->
+            {
+              try
+              {
+                FileUtils.writeStringToFile(parseResources, item2 + "\n", "UTF-8", true);
+              }
+              catch (IOException ex)
+              {
+                alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+              }
+            });
+          }
+          catch (IOException ex)
+          {
+            alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+          }
+        }
+      });
+    }
+    catch (IOException ex)
+    {
+      alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+    }
+  }
+
+  /**
+   * Install a specific resource pack.
+   * @param pack the sound pack to be installed. Must be a String<br>
+   * with the proper pack name.
+   * @param isSoundpack true if the resource is a soundpack, false if it's a texturepack.
+   */
+  public void installResourcePack(String pack, boolean isSoundpack)
+  {
+    try
+    {
+      ui.changeProgress(true, 20, 20);
+      ui.changeMainLabel("Aguarde...");
+      ui.changeSecondaryLabel("Verificando...");
+
+      parseResourcePacks();
+      File optionsTxt = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/options.txt");
+      File parseResources = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resources.dc");
+      List<String> readList = FileUtils.readLines(optionsTxt, "UTF-8");
+      FileUtils.deleteQuietly(optionsTxt);
+      FileUtils.touch(optionsTxt);
+
+      ui.changeProgress(true, 50, 20);
+      ui.changeSecondaryLabel("Aplicando configurações...");
+
+      try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(optionsTxt))))
+      {
+        readList.forEach((item)->
+        {
+          try
+          {
+            if ( (!item.contains("incompatibleResourcePacks:")) && (item.contains("resourcePacks:")) )
+            {
+              List<String> read = FileUtils.readLines(parseResources, "UTF-8");
+              read.forEach((item2)->
+              {
+                if ( (isSoundpack) && (item2.contains("TexturePack: ")) )
+                {
+                  item2 = item2.replace("TexturePack: ", "");
+                  resourcePackToKeep = item2;
+                }
+                else if ( (!isSoundpack) && (item2.contains("SoundPack: ")) )
+                {
+                  item2 = item2.replace("SoundPack: ", "");
+                  resourcePackToKeep = item2;
+                }
+              });
+              String add = "";
+              if (resourcePackToKeep.equals(""))
+              {
+                add = "]";
+              }
+              else
+              {
+                add = ", " + resourcePackToKeep + "]";
+              }
+              item = "resourcePacks:" + "[" + "\"" + pack + "\"" + add;
+            }
+            bw.write(item);
+            bw.newLine();
+          }
+          catch (IOException ex)
+          {
+            alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+          }
+        });
+        ui.changeProgress(true, 100, 20);
+        ui.changeMainLabel("Concluído");
+        ui.changeSecondaryLabel("Concluído");
+      }
+      installSkin();
+    }
+    catch (IOException ex)
+    {
+      alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+    }
+  }
+
+
+  /**
+   * Install a skin, injecting it inside the resource pack.
+   */
+  public void installSkin()
+  {
+    try
+    {
+      ui.changeProgress(true, 10, 20);
+      ui.changeMainLabel("Aguarde...");
+      ui.changeSecondaryLabel("Verificando skin...");
+
+      File skinFolder = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/skin");
+      File skinFile1 = new File(skinFolder + "/steve.png");
+      File skinFile2 = new File(skinFolder + "/alex.png");
+      Collection<File> skinFile = FileUtils.listFiles(skinFolder, null, true);
+      if (!skinFile.isEmpty())
+      {
+        skinFile.forEach((item)->
+        {
+          if (item.getName().contains(".png"))
+          {
+            try
+            {
+              FileUtils.copyFile(item, skinFile1);
+              FileUtils.copyFile(item, skinFile2);
+            }
+            catch (IOException ex)
+            {
+              alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+            }
+          }
+          else
+          {
+            logger.log("***ERRO***", "NÃO FOI POSSÍVEL ENCONTRAR SKINS NO REPOSITÓRIO SELECIONADO!");
+          }
+        });
+        ui.changeProgress(true, 30, 20);
+        ui.changeMainLabel("Aguarde...");
+        ui.changeSecondaryLabel("Alterando configurações...");
+
+        File parseResources = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resources.dc");
+        parseResourcePacks();
+
+        ui.changeProgress(true, 50, 20);
+
+        List<String> read = FileUtils.readLines(parseResources, "UTF-8");
+        read.forEach((item2)->
+        {
+          if (item2.contains("TexturePack: "))
+          {
+            item2 = item2.replace("TexturePack: ", "");
+            resourcePackToKeep = item2;
+          }
+        });
+        resourcePackToKeep = resourcePackToKeep.replace("\"", "");
+        File resourcePack = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resourcepacks/" + resourcePackToKeep);
+        File dest = new File(DexCraftFiles.tempFolder + "/resourcepack");
+        if (dest.exists())
+        {
+          dest.mkdirs();
+        }
+        File skinDest = new File(dest + "/assets/minecraft/textures/entity/");
+
+        ui.changeProgress(true, 60, 20);
+        ui.changeMainLabel("Aguarde...");
+        ui.changeSecondaryLabel("Aplicando skin no perfil de jogo...");
+
+        Install extractResourcePack = new Install();
+        Thread extractThread = new Thread(()->
+        {
+          extractResourcePack.downloadedZipResource(resourcePack, dest);
+        });
+        extractThread.start();
+
+        ui.resetProgress();
+
+        while (extractThread.isAlive())
+        {
+          ui.changeProgress(true, -1, 10);
+          try
+          {
+            Thread.sleep(1000);
+          }
+          catch (InterruptedException ex)
+          {
+            // ignored
+          }
+        }
+
+        ui.resetProgress();
+        ui.changeProgress(true, 60, 20);
+
+        FileIO fio = new FileIO();
+        fio.copiar(skinFile1,skinDest);
+        fio.copiar(skinFile2, skinDest);
+
+        ui.changeProgress(true, 80, 20);
+        ui.changeMainLabel("Aguarde...");
+        ui.changeSecondaryLabel("Aplicando skin no perfil de jogo...");
+
+        Thread zipThread = new Thread(()->
+        {
+          createZipFile();
+        });
+        zipThread.start();
+
+        ui.resetProgress();
+
+        while (zipThread.isAlive())
+        {
+          ui.changeProgress(true, -1, 10);
+          try
+          {
+            Thread.sleep(1000);
+          }
+          catch (InterruptedException ex)
+          {
+            // ignored
+          }
+        }
+
+        ui.resetProgress();
+        ui.changeMainLabel("");
+        ui.changeSecondaryLabel("Concluído");
+        ui.changeProgress(true, 100, 20);
+      }
+    }
+    catch (IOException ex)
+    {
+      alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+    }
+  }
+
+
+  /**
+   * Recriates resource pack in zip file form.
+   */
+  public void createZipFile()
+  {
+    try
+    {
+      File fil = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resourcepacks/" + resourcePackToKeep);
+      FileUtils.deleteQuietly(fil);
+      FileUtils.touch(fil);
+      // Create zip file stream.
+      try (ZipArchiveOutputStream archive = new ZipArchiveOutputStream(new FileOutputStream(fil)))
+      {
+        File folderToZip = new File(DexCraftFiles.tempFolder + "/resourcepack");
+        Files.walk(folderToZip.toPath()).forEach(p ->
+        {
+          File file = p.toFile();
+          if (!file.isDirectory())
+          {
+            String filepath = file.toString();
+            filepath = filepath.substring(filepath.lastIndexOf(folderToZip.getName()), filepath.length());
+            filepath = filepath.replace(folderToZip.getName(), "");
+            filepath = filepath.substring(1);
+            ZipArchiveEntry entry_1 = new ZipArchiveEntry(file, filepath);
+            try (FileInputStream fis = new FileInputStream(file))
+            {
+              archive.putArchiveEntry(entry_1);
+              IOUtils.copy(fis, archive);
+              archive.closeArchiveEntry();
+            }
+            catch (IOException e)
+            {
+              alerts.exceptionHandler(e, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+            }
+          }
+        });
+        archive.finish();
+      }
+      catch (IOException e)
+      {
+        alerts.exceptionHandler(e, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
+      }
+    }
+    catch (IOException ex)
+    {
+      alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
     }
   }
 

@@ -93,21 +93,6 @@ public class Validate
   }
 
   /**
-  * Used on Init.<br>
-  * Prepares launcher cache files and folders.
-  */
-  public static void cache()
-  {
-    if (DexCraftFiles.tempFolder.exists())
-    {
-      FileIO fio = new FileIO();
-      fio.excluir(DexCraftFiles.tempFolder, true);
-    }
-    SessionDTO.setDexCraftLauncherClientInstance(false);
-    SessionDTO.setDexCraftBackgroundServicesInstance(false);
-  }
-
-  /**
    * Validates a provisionedComponent.<br>
    * 1 - Check if the version is outdated or not installed<br>
    * 2 - Perform the download of the update with progress to the UI<br>

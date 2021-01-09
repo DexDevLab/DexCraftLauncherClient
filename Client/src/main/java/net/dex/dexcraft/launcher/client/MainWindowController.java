@@ -1,15 +1,20 @@
 package net.dex.dexcraft.launcher.client;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
@@ -20,8 +25,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import static net.dex.dexcraft.commons.Commons.logger;
 import net.dex.dexcraft.commons.dto.SessionDTO;
+import net.dex.dexcraft.commons.tools.Close;
+import net.dex.dexcraft.commons.tools.DexCraftFiles;
 import net.dex.dexcraft.commons.tools.DexUI;
 import static net.dex.dexcraft.launcher.client.Client.switchStage;
 import net.dex.dexcraft.launcher.client.services.AccountSyncService;
@@ -30,6 +40,7 @@ import net.dex.dexcraft.launcher.client.services.MainService;
 import net.dex.dexcraft.launcher.client.services.PingService;
 import net.dex.dexcraft.launcher.client.services.PrepareLauncherService;
 import net.dex.dexcraft.launcher.client.services.Validate;
+import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -58,6 +69,13 @@ public class MainWindowController implements Initializable
   //Menu Conta
   @FXML
   private Menu menuConta;
+
+  @FXML
+  private CustomMenuItem menuItemDoChangeSkin;
+
+  @FXML
+  private Label labelDoChangeSkin;
+
 
   @FXML
   private CheckBox checkBoxBackupSingleplayer;
@@ -199,7 +217,9 @@ public class MainWindowController implements Initializable
 
   public static int serverIndex = 0;
 
-  public static boolean isAccountSyncDone = false;
+  public static boolean isAccountSyncDone = true;
+
+  public static String logDirSize = "";
 
 
   /**
@@ -220,13 +240,102 @@ public class MainWindowController implements Initializable
   }
 
   /**
+   * Performs Skin change.
+   * @param event the action event
+   */
+  @FXML
+  void doChangeSkin(ActionEvent event)
+  {
+    String component = "";
+    switch (serverIndex)
+    {
+      case 0:
+        component = "dc";
+        break;
+      case 1:
+        component = "dcpx";
+        break;
+      case 2:
+        component = "dcvn";
+        break;
+      case 3:
+        component = "dcb";
+        break;
+      default:
+        break;
+    }
+    File skinFolder = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/skin");
+    if (skinFolder.exists())
+    {
+      FileUtils.deleteQuietly(skinFolder);
+      skinFolder.mkdirs();
+    }
+    isAccountSyncDone = false;
+
+    FileChooser chooser = new FileChooser();
+    chooser.setTitle("Selecione a Skin");
+    File file = chooser.showOpenDialog(switchStage);
+    File destination = new File(skinFolder + "/" + file.getName());
+    if (file != null)
+    {
+      try
+      {
+        Files.copy(file.toPath(), destination.toPath());
+      }
+      catch (IOException ex)
+      {
+        Alert alerts = new Alert(Alert.AlertType.ERROR);
+        alerts.initModality(Modality.APPLICATION_MODAL);
+        Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
+        stage.getIcons().add(new Image(Client.class.getResourceAsStream("icon1.jpg")));
+        stage.setOnCloseRequest((e) -> {Close.withErrors();});
+        alerts.getButtonTypes().clear();
+        alerts.setTitle("Erro no Client");
+        alerts.setHeaderText("");
+        alerts.setContentText("Erro crítico durante a implantação da skin.\n"
+                              + "Reinicie o Launcher novamente.");
+        ButtonType btnok = new ButtonType("OK");
+        alerts.getButtonTypes().add(btnok);
+        Optional<ButtonType> result = alerts.showAndWait();
+        if (result.get() == btnok)
+        {
+          Close.withErrors();
+        }
+      }
+      serviceName = "ChangeSkin";
+      isAccountSyncDone = true;
+      callPrepareLauncherService();
+    }
+  }
+
+
+  /**
    * Forces backup, pushing data to the FTP Server.
    * @param event the action event.
    */
   @FXML
   void doBackup(ActionEvent event)
   {
-
+    Alert alerts = new Alert(Alert.AlertType.CONFIRMATION);
+    alerts.initModality(Modality.APPLICATION_MODAL);
+    Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
+    stage.getIcons().add(new Image(Client.class.getResourceAsStream("icon1.jpg")));
+    stage.setOnCloseRequest((e) -> {e.consume();});
+    alerts.getButtonTypes().clear();
+    alerts.setTitle("Realizar backup");
+    alerts.setHeaderText("");
+    alerts.setContentText("Você deseja realizar o backup?\n"
+                         +"Você irá sobrescrever quaisquer backups seus.");
+    ButtonType btnsim = new ButtonType("Sim");
+    ButtonType btnnao = new ButtonType("Não");
+    alerts.getButtonTypes().add(btnsim);
+    alerts.getButtonTypes().add(btnnao);
+    Optional<ButtonType> result = alerts.showAndWait();
+    if (result.get() == btnsim)
+    {
+      serviceName = "Backup";
+      callAccountSyncService();
+    }
   }
 
   /**
@@ -236,7 +345,26 @@ public class MainWindowController implements Initializable
   @FXML
   void doBackupRestore(ActionEvent event)
   {
-
+    Alert alerts = new Alert(Alert.AlertType.CONFIRMATION);
+    alerts.initModality(Modality.APPLICATION_MODAL);
+    Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
+    stage.getIcons().add(new Image(Client.class.getResourceAsStream("icon1.jpg")));
+    stage.setOnCloseRequest((e) -> {e.consume();});
+    alerts.getButtonTypes().clear();
+    alerts.setTitle("Realizar backup");
+    alerts.setHeaderText("");
+    alerts.setContentText("Você deseja restaurar seus dados por um backup no servidor?\n"
+                         +"Você irá sobrescrever quaisquer dados seus.");
+    ButtonType btnsim = new ButtonType("Sim");
+    ButtonType btnnao = new ButtonType("Não");
+    alerts.getButtonTypes().add(btnsim);
+    alerts.getButtonTypes().add(btnnao);
+    Optional<ButtonType> result = alerts.showAndWait();
+    if (result.get() == btnsim)
+    {
+      serviceName = "Restore";
+      callAccountSyncService();
+    }
   }
 
   /**
@@ -256,7 +384,38 @@ public class MainWindowController implements Initializable
   @FXML
   void doCleanLogs(ActionEvent event)
   {
-    // TODO
+    Alert alerts = new Alert(Alert.AlertType.CONFIRMATION);
+    alerts.initModality(Modality.APPLICATION_MODAL);
+    Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
+    stage.getIcons().add(new Image(Client.class.getResourceAsStream("icon1.jpg")));
+    stage.setOnCloseRequest((e) -> {e.consume();});
+    alerts.getButtonTypes().clear();
+    alerts.setTitle("Limpar arquivos de log");
+    alerts.setHeaderText("");
+    alerts.setContentText("Você deseja limpar o diretório de logs?\n"
+                         + "Essa ação NÃO poderá ser desfeita.");
+    ButtonType btnsim = new ButtonType("Sim");
+    ButtonType btnnao = new ButtonType("Não");
+    alerts.getButtonTypes().add(btnsim);
+    alerts.getButtonTypes().add(btnnao);
+    Optional<ButtonType> result = alerts.showAndWait();
+    if (result.get() == btnsim)
+    {
+      logDirSize = logger.cleanLogs();
+      Alert alerts2 = new Alert(Alert.AlertType.INFORMATION);
+      alerts2.initModality(Modality.APPLICATION_MODAL);
+      Stage stage2 = (Stage) alerts2.getDialogPane().getScene().getWindow();
+      stage2.getIcons().add(new Image(Client.class.getResourceAsStream("icon1.jpg")));
+      stage2.setOnCloseRequest((e) -> {e.consume();});
+      alerts2.getButtonTypes().clear();
+      alerts2.setTitle("Limpeza Concluída");
+      alerts2.setHeaderText("");
+      alerts2.setContentText(logDirSize + " de dados foram limpos.");
+      ButtonType btnok = new ButtonType("OK");
+      alerts2.getButtonTypes().add(btnok);
+      Optional<ButtonType> result2 = alerts2.showAndWait();
+      if (result2.get() == btnok){}
+    }
   }
 
   /**
@@ -322,7 +481,8 @@ public class MainWindowController implements Initializable
   @FXML
   void doInstallSoundChocoboV2(ActionEvent event)
   {
-    // TODO
+    serviceName = "InstallSoundDCPXChocoboV2";
+    callPrepareLauncherService();
   }
 
   /**
@@ -358,6 +518,7 @@ public class MainWindowController implements Initializable
   {
     serviceName = "PlayGame";
     callAccountSyncService();
+    callPrepareLauncherService();
   }
 
   /**
@@ -422,10 +583,12 @@ public class MainWindowController implements Initializable
     AccountSyncService account = new AccountSyncService();
     account.setUI(mainUI);
     new Thread(account).start();
-    callPrepareLauncherService(serviceName);
   }
 
-  public void callPrepareLauncherService(String serviceName)
+  /**
+   * Calls the Prepare Launcher Service.
+   */
+  public void callPrepareLauncherService()
   {
     PrepareLauncherService prepare = new PrepareLauncherService();
     prepare.setUI(mainUI);
@@ -446,7 +609,6 @@ public class MainWindowController implements Initializable
     main.setUI(mainUI);
     new Thread(main).start();
   }
-
 
   /**
    * Calls the Background Randomizer Service.
@@ -524,6 +686,7 @@ public class MainWindowController implements Initializable
         + "Essa opção afeta apenas o client do servidor selecionado."));
     labelCleanLogs.setTooltip(mainUI.tooltipBuilder
       ("Limpa a pasta de logs."));
+    labelCleanLogs.setText("Limpar logs... (" + logger.getLogSize() + ")");
     labelAbout.setTooltip(mainUI.tooltipBuilder
       ("Sobre DexCraft Launcher..."));
   }
@@ -534,11 +697,24 @@ public class MainWindowController implements Initializable
    */
   private void disableMenus(int serverInd)
   {
+    if (SessionDTO.isOfflineModeOn())
+    {
+      menuItemDoBackup.setDisable(true);
+      menuItemRestoreBackup.setDisable(true);
+    }
     switch (serverInd)
     {
       case 0:
         break;
       case 1:
+        // Menu Avançado
+        menuAvancado.setVisible(false);
+
+        // Menu Extras
+        menuExtras.setVisible(false);
+
+        // Menu Ajuda
+        menuItemReinstallClient.setDisable(true);
         break;
       case 2:
         break;
@@ -587,9 +763,9 @@ public class MainWindowController implements Initializable
         break;
     }
     // Disable some menu options while it's under development
-////    disableMenus(serverIndex);
+    disableMenus(serverIndex);
     // Default option to disable all menus
-    disableMenus(99);
+//////    disableMenus(99);
 
   }
 

@@ -84,6 +84,7 @@ public class Close
     FileUtils.deleteQuietly(DexCraftFiles.adminCheck);
     FileUtils.deleteQuietly(DexCraftFiles.tempFolder);
     FileUtils.deleteQuietly(DexCraftFiles.logLock);
+    FileUtils.deleteQuietly(DexCraftFiles.playerLock);
     SessionDTO.setDexCraftLauncherInitInstance(false);
     SessionDTO.setDexCraftLauncherClientInstance(false);
     SessionDTO.setDexCraftBackgroundServicesInstance(false);

@@ -33,13 +33,12 @@
         <menus>
           <Menu fx:id="menuConta" mnemonicParsing="false" text="Conta">
             <items>
-                  <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
+                  <CustomMenuItem fx:id="menuItemDoChangeSkin" mnemonicParsing="false" onAction="#doChangeSkin">
                      <content>
-                        <CheckBox fx:id="checkBoxBackupSingleplayer" mnemonicParsing="false" selected="true" text="Backupear Mundos Singleplayer" textAlignment="CENTER" textFill="#1b1a1a">
+                        <Label fx:id="labelDoChangeSkin" text="Alterar Skin...">
                            <font>
                               <Font name="Segoe UI" size="12.0" />
-                           </font>
-                        </CheckBox>
+                           </font></Label>
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -57,6 +56,16 @@
                            <font>
                               <Font name="Segoe UI" size="12.0" />
                            </font></Label>
+                     </content>
+                  </CustomMenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <CustomMenuItem hideOnClick="false" mnemonicParsing="false">
+                     <content>
+                        <CheckBox fx:id="checkBoxBackupSingleplayer" mnemonicParsing="false" selected="true" text="Backupear Mundos Singleplayer" textAlignment="CENTER" textFill="#1b1a1a">
+                           <font>
+                              <Font name="Segoe UI" size="12.0" />
+                           </font>
+                        </CheckBox>
                      </content>
                   </CustomMenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />

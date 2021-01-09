@@ -149,7 +149,7 @@ public class Download
    * Set the download speed.
    * @param value the speed in a proper measure unit.
    */
-  public void setDownloadSpeed(String value) { this.downloadSpeed = value; }
+  private void setDownloadSpeed(String value) { this.downloadSpeed = value; }
 
 
   /**

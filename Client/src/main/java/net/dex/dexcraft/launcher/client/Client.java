@@ -22,8 +22,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.dex.dexcraft.commons.Commons;
-import net.dex.dexcraft.commons.check.OfflineMode;
 import net.dex.dexcraft.commons.dto.FtpDTO;
+import net.dex.dexcraft.commons.dto.SessionDTO;
 import net.dex.dexcraft.commons.dto.SqlDTO;
 import net.dex.dexcraft.commons.dto.UrlsDTO;
 import net.dex.dexcraft.commons.dto.VersionsDTO;
@@ -38,7 +38,7 @@ import net.dex.dexcraft.launcher.client.services.Validate;
 /**
   * @author Dex
   * @since 30/04/2020
-  * @version v11.0.3-210106-2732
+  * @version v11.1.0-210109-2790
   *
   * Preloader Class with splash screen.
   */
@@ -171,7 +171,7 @@ public class Client extends Application
             preloaderUI.changeProgress(true, 40, 35);
 
             // Do tasks below only if launcher isn't on Offline Mode
-            if(!OfflineMode.IsRunning())
+            if(!SessionDTO.isOfflineModeOn())
             {
               changeStatus(preloaderUI, "Verificando versão do DexCraft Launcher Init...", "");
 

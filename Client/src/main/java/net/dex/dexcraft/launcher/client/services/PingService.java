@@ -152,7 +152,16 @@ public class PingService extends Task<Void>
         {
           isServiceNeeded = Validate.isPingServiceOnMainWindowRunning;
         }
-        if (!SessionDTO.isOfflineModeOn())
+        if (SessionDTO.isConnectionTestDisabled())
+        {
+          Platform.runLater(()->
+          {
+            getPingIcon().setImage(gray);
+            getPingLabelTooltip().setTooltip(loginUI.tooltipBuilder("Testes de rede desativados"));
+            getPingLabel().setText("Ping Off");
+          });
+        }
+        else if (!SessionDTO.isOfflineModeOn())
         {
           long ping = (Long.parseLong(con.getPing(pingURL)) + (500 /(getSpeed - getMinimumSpeed)));
 

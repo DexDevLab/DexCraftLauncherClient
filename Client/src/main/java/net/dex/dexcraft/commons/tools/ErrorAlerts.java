@@ -30,6 +30,8 @@ public class ErrorAlerts
   private Throwable exceptionHandlerThrowable;
   private String exceptionHandlerContext;
 
+  String logDirSize;
+
   /** Inform if user has enabled the Offline Mode
    * in previous program running.<br>
    * This value is changed depending of the answer
@@ -327,6 +329,91 @@ public class ErrorAlerts
     }
   }
 
+  /**
+   * Calls the "Clear Logs" alert.
+   */
+  public void clearLogs()
+  {
+    FutureTask<String> clearLogs = new FutureTask<>(new ClearLogs());
+    logger.log("INFO", "Exibindo Alerts.NoArch()...");
+    Platform.runLater(clearLogs);
+    logger.log("INFO", "Aguardando resposta do usuário...");
+    alertLock(clearLogs);
+    logger.log("INFO", "Alerts.noArch() finalizado");
+  }
+
+
+  /**
+   * This alert is shown when the user wants to clean the
+   * log folder.
+   */
+  class ClearLogs implements Callable
+  {
+
+    @Override
+    public ClearLogs call() throws Exception
+    {
+      Alert alerts = new Alert(Alert.AlertType.WARNING);
+      alerts.initModality(Modality.APPLICATION_MODAL);
+      Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
+      stage.getIcons().add(getImage());
+      stage.setOnCloseRequest((e) -> {e.consume();});
+      alerts.getButtonTypes().clear();
+      alerts.setTitle("Limpar arquivos de log");
+      alerts.setHeaderText("");
+      alerts.setContentText("Você deseja limpar o diretório de logs?\n"
+                           + "Essa ação NÃO poderá ser desfeita.");
+      ButtonType btnsim = new ButtonType("Sim");
+      ButtonType btnnao = new ButtonType("Não");
+      alerts.getButtonTypes().add(btnsim);
+      alerts.getButtonTypes().add(btnnao);
+      Optional<ButtonType> result = alerts.showAndWait();
+      if (result.get() == btnsim)
+      {
+        logDirSize = logger.cleanLogs();
+        clearLogsDone();
+      }
+      return null;
+    }
+  }
+
+  /**
+   * Calls the "Clear Logs Done" alert.
+   */
+  public void clearLogsDone()
+  {
+    FutureTask<String> clearLogsDone = new FutureTask<>(new ClearLogsDone());
+    logger.log("INFO", "Exibindo Alerts.NoArch()...");
+    Platform.runLater(clearLogsDone);
+    logger.log("INFO", "Aguardando resposta do usuário...");
+    alertLock(clearLogsDone);
+    logger.log("INFO", "Alerts.noArch() finalizado");
+  }
+
+  /**
+   * This alert is shown when the user decides to clean the logs.
+   */
+  class ClearLogsDone implements Callable
+  {
+
+    @Override
+    public ClearLogsDone call() throws Exception
+    {
+      Alert alerts = new Alert(Alert.AlertType.WARNING);
+      alerts.initModality(Modality.APPLICATION_MODAL);
+      Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
+      stage.getIcons().add(getImage());
+      stage.setOnCloseRequest((e) -> {e.consume();});
+      alerts.getButtonTypes().clear();
+      alerts.setTitle("Limpeza Concluída");
+      alerts.setHeaderText("");
+      alerts.setContentText(logDirSize + " de dados foram limpos.");
+      ButtonType btnok = new ButtonType("OK");
+      alerts.getButtonTypes().add(btnok);
+      Optional<ButtonType> result = alerts.showAndWait();
+      return null;
+    }
+  }
 
   /**
    * Calls the "Offline Mode" alert.
@@ -616,9 +703,7 @@ public class ErrorAlerts
     exceptionHandlerThrowable = ex;
     exceptionHandlerContext = exceptionMessage;
     Platform.runLater(exceptionhandler);
-    logger.log("INFO", "Aguardando resposta do usuário...");
     alertLock(exceptionhandler);
-    logger.log("INFO", "Alerts.exceptionHandler(Throwable, String) finalizado");
     Close.withErrors();
   }
 
@@ -636,14 +721,6 @@ public class ErrorAlerts
       alerts.setTitle("ERRO");
       alerts.setHeaderText("EXCEÇÃO - " + exceptionHandlerThrowable.getMessage());
       alerts.setContentText(exceptionHandlerContext);
-      alerts.getButtonTypes().clear();
-      ButtonType btnok = new ButtonType("OK");
-      alerts.getButtonTypes().add(btnok);
-      Optional<ButtonType> result = alerts.showAndWait();
-      if (result.get() == btnok)
-      {
-        Close.withErrors();
-      }
       Stage stage = (Stage) alerts.getDialogPane().getScene().getWindow();
       stage.getIcons().add(getImage());
       stage.setOnCloseRequest((e) -> {Close.withErrors();});

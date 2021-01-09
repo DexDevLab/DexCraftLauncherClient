@@ -387,3 +387,39 @@ Gladly back to Github!
 		* Added snippet to clone syncProps file in case of new account.
 	* PrepareLauncherService.java:
 		* Reduced sleep interval to reduce button release after account verification.
+## v11.1.0-210109-2790
+* DexCraft Commons:
+	* OfflineMode.java:
+		* Added option to disable connection tests in case of constant error (since I couldn't solve the exception some players are strangely experiencing)
+	* SystemRequirements.java:
+		* Added option to disable connection tests in case of constant error (since I couldn't solve the exception some players are strangely experiencing)
+	* SessionDTO:
+		* Added parser, getter and setter for the option to disable connection tests
+		* Removed "Force Resources Update" option (uneeded)
+	* Close.java:
+		* Added playerlock exclusion to normal program quit
+	* Connections.java:
+		* Download speed meter adjustments
+	* DexCraftFiles.java:
+		* Added soundpack variable
+	* ErrorAlerts:
+		* Removed extra logging to avoid bugging on window
+		* Removed button implementation on alert which was causing bug
+	* Install.java:
+		* Changed algorithm to fix bugs while extracting file
+* DexCraft Launcher Client:
+	* Fixed bug where the system versions was verified even on OfflineMode
+	* MainWindowController.java:
+		* Added resource pack installation
+		* Added skin installation
+	* MainWindow.fxml:
+		* Added select skin option
+* DexCraft Launcher Client Services:
+	* PingService.java:
+		* Added option to disable ping in case of chosen for disable connection tests
+	* PrepareLauncherService.java:
+		* Reduced sleep interval to reduce button release after account verification. (tesing purposes)
+		* Added resource pack and skin installation Classes
+	* Validate.java:
+		* Removed Validate Cache method (unused)
+		
