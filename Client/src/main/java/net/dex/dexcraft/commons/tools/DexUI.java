@@ -306,6 +306,11 @@ public class DexUI
     menuB = mb;
   }
 
+  public void setMenuBarDisable(boolean isDisabled)
+  {
+    Platform.runLater(() -> {menuB.setDisable(isDisabled);});
+  }
+
   /**
    * Retrievethe UI's Progress Bar.
    * @return the progress bar

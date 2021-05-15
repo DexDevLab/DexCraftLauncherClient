@@ -55,14 +55,14 @@ public class Validate
     switch (instanceName)
     {
       case "Init":
-        if (DexCraftFiles.logLock.exists())
+        if (SessionDTO.getDexCraftLauncherInitStatus())
         {
-          SessionDTO.setDexCraftLauncherInitInstance(true);
           isInstanceInvalid = true;
         }
         else
         {
           isInstanceInvalid = false;
+          SessionDTO.setDexCraftLauncherInitInstance(true);
         }
         break;
       case "Client":

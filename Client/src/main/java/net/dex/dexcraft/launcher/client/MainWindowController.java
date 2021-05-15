@@ -427,7 +427,8 @@ public class MainWindowController implements Initializable
   @FXML
   void doInstallDefaultCfg(ActionEvent event)
   {
-    // TODO
+    serviceName = "InstallMedCfg";
+    callPrepareLauncherService();
   }
 
   /**
@@ -439,7 +440,8 @@ public class MainWindowController implements Initializable
   @FXML
   void doInstallMaxCfg(ActionEvent event)
   {
-    // TODO
+    serviceName = "InstallMaxCfg";
+    callPrepareLauncherService();
   }
 
   /**
@@ -451,7 +453,8 @@ public class MainWindowController implements Initializable
   @FXML
   void doInstallMinCfg(ActionEvent event)
   {
-    // TODO
+    serviceName = "InstallMinCfg";
+    callPrepareLauncherService();
   }
 
   /**
@@ -461,7 +464,8 @@ public class MainWindowController implements Initializable
   @FXML
   void doInstallNoJVMArgs(ActionEvent event)
   {
-    // TODO
+    serviceName = "InstallNoJVMArgs";
+    callPrepareLauncherService();
   }
 
   /**
@@ -707,9 +711,6 @@ public class MainWindowController implements Initializable
       case 0:
         break;
       case 1:
-        // Menu Avançado
-        menuAvancado.setVisible(false);
-
         // Menu Extras
         menuExtras.setVisible(false);
 

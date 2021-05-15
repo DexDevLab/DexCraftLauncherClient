@@ -94,6 +94,7 @@ public class AccountSyncService extends Task<Void>
       ftp.setWorkingDir(FtpDTO.getFtpWorkingDir());
       ftp.connect();
       ui.setMainButtonDisable(true);
+      ui.setMenuBarDisable(true);
       ui.getProgressBar().setVisible(true);
       Thread thread = new Thread(new AccountSync());
       thread.setDaemon(true);
@@ -291,6 +292,15 @@ public class AccountSyncService extends Task<Void>
         ftp.checkFolder(FtpDTO.getFtpWorkingDir() + "/" + SessionDTO.getSessionUser());
         File backupZip = new File (DexCraftFiles.tempFTPFolder.toString() + "/" + component + ".7z");
         File check = new File(FtpDTO.getFtpWorkingDir() + "/" + SessionDTO.getSessionUser() + "/" + component + ".7z");
+        File oldCheck = new File(FtpDTO.getFtpWorkingDir() + "/" + SessionDTO.getSessionUser() + "/" + component + ".7z.old");
+        if (ftp.fileExists(oldCheck))
+        {
+          if (ftp.fileExists(check))
+          {
+            ftp.deleteFile(check.toString());
+          }
+          ftp.renameFile(oldCheck.toString(),check.toString());
+        }
         if (ftp.fileExists(check))
         {
           Thread downloadBackup = new Thread(()->
@@ -399,13 +409,14 @@ public class AccountSyncService extends Task<Void>
           ftp.downloadFileWithProgress(SessionDTO.getSessionUser(), tempSyncProps);
         });
         downloadSyncProps.start();
-        ui.changeProgress(true, -1, 30);
+        ui.resetProgress();
+        ui.changeProgress(true, -1, 10);
         while (downloadSyncProps.isAlive())
         {
           ui.changeMainLabel("Baixando assets...");
           try
           {
-            Thread.sleep(1000);
+            Thread.sleep(500);
           }
           catch (InterruptedException ex)
           {

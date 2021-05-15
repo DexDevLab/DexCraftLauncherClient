@@ -163,7 +163,7 @@ public class PingService extends Task<Void>
         }
         else if (!SessionDTO.isOfflineModeOn())
         {
-          long ping = (Long.parseLong(con.getPing(pingURL)) + (500 /(getSpeed - getMinimumSpeed)));
+          long ping = (Long.parseLong(con.getPing(pingURL)) + (700 /(getSpeed - getMinimumSpeed)));
 
           // Use line below to test the service
 //          System.out.println("ping: " + ping + "ms");

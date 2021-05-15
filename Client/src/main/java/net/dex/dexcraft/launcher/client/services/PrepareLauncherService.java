@@ -49,7 +49,7 @@ public class PrepareLauncherService extends Task<Void>
   public String component;
 
   public String resourcePackToKeep = "";
-  public File pack;
+  public File pack = new File ("C:/null.dc");
   public String packUrl;
 
   /**
@@ -83,7 +83,7 @@ public class PrepareLauncherService extends Task<Void>
     {
       try
       {
-        Thread.sleep(1000);
+        Thread.sleep(200);
       }
       catch (InterruptedException ex)
       {
@@ -110,10 +110,10 @@ public class PrepareLauncherService extends Task<Void>
     ui.setMainButtonDisable(true);
     ui.changeMainLabel("");
     ui.changeSecondaryLabel("");
-    ui.getMenuBar().setDisable(true);
+    ui.setMenuBarDisable(true);
     ui.getProgressBar().setVisible(true);
     ui.resetProgress();
-    ui.changeProgress(false, -1, 20);
+    ui.changeProgress(false, -1, 10);
     mainRoutine();
     return null;
   }
@@ -142,6 +142,30 @@ public class PrepareLauncherService extends Task<Void>
         Thread thread3 = new Thread(new InstallResourcePack());
         thread3.setDaemon(true);
         thread3.start();
+        break;
+      case "InstallMinCfg":
+        // Runs Thread to install a specific config profile
+        Thread thread4 = new Thread(new InstallConfig());
+        thread4.setDaemon(true);
+        thread4.start();
+        break;
+      case "InstallMedCfg":
+        // Runs Thread to install a specific config profile
+        Thread thread5 = new Thread(new InstallConfig());
+        thread5.setDaemon(true);
+        thread5.start();
+        break;
+      case "InstallMaxCfg":
+        // Runs Thread to install a specific config profile
+        Thread thread6 = new Thread(new InstallConfig());
+        thread6.setDaemon(true);
+        thread6.start();
+        break;
+      case "InstallNoJVMArgs":
+        // Runs Thread to install a specific config profile
+        Thread thread8 = new Thread(new InstallConfig());
+        thread8.setDaemon(true);
+        thread8.start();
         break;
       default:
         alerts.tryAgain();
@@ -201,13 +225,13 @@ public class PrepareLauncherService extends Task<Void>
       }
       catch (IOException ex)
       {
-        System.out.println("ERRO");
+        alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.applySettingsProfile(String)");
       }
     });
     apply.start();
     while (apply.isAlive())
     {
-      ui.changeProgress(false, -1, 20);
+      ui.changeProgress(false, -1, 10);
       ui.changeMainLabel("Aguarde...");
       ui.changeSecondaryLabel("Aguarde...");
       try
@@ -338,7 +362,7 @@ public class PrepareLauncherService extends Task<Void>
     public void run()
     {
       logger.log("INFO", "PREPARELAUNCHER: Verificando assets do Shiginima...");
-      ui.changeProgress(true, 10, 20);
+      ui.changeProgress(true, 10, 10);
       ui.changeMainLabel("Aguarde...");
       ui.changeSecondaryLabel("Verificando assets e carregando launcher interno...");
       File runtimeDir = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft");
@@ -346,7 +370,7 @@ public class PrepareLauncherService extends Task<Void>
       if (!launcherJSON.exists())
       {
         logger.log("INFO", "PREPARELAUNCHER: Assets de launcher não encontrado. Ajustes de performance serão feitos do zero.");
-        ui.changeProgress(true, 20, 20);
+        ui.changeProgress(true, 20, 10);
         SystemRequirements req = new SystemRequirements();
         int ramMB = req.checkSystemRAMGB() * 1000;
         if (ramMB >= Integer.parseInt(SystemDTO.getReqsMaximumRAM()))
@@ -361,7 +385,7 @@ public class PrepareLauncherService extends Task<Void>
         {
           applySettingsProfile("min");
         }
-        ui.changeProgress(true, 40, 20);
+        ui.changeProgress(true, 40, 10);
       }
       String category = "";
       switch (SessionDTO.getLastServer())
@@ -384,17 +408,37 @@ public class PrepareLauncherService extends Task<Void>
       editJavaVersionOnJSON(launcherJSON, category);
       File shiginimaFile = new File(runtimeDir + "/shig.inima");
       editShiginimaAsset(shiginimaFile);
-      ui.changeProgress(true, 80, 20);
+      ui.changeProgress(true, 80, 10);
       if(!SessionDTO.isOfflineModeOn())
       {
         applySettingsProfile("serverdat");
       }
       try
       {
+        parseResourcePacks();
+        File parseResources = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resources.dc");
+        List<String> readList = FileUtils.readLines(parseResources, "UTF-8");
+        readList.forEach((item)->
+        {
+          if (component.equals("dcpx"))
+          {
+            if (item.contains("No Batidao do Chocobo (1.12.2-v2)"))
+            {
+              serviceName = "InstallSoundDCPXChocoboV2";
+            }
+          }
+        });
+        Thread thread = new Thread(new InstallResourcePack());
+        thread.setDaemon(true);
+        thread.start();
+        while (thread.isAlive())
+        {
+          Thread.sleep(1000);
+        }
         logger.log("INFO", "PREPARELAUNCHER: Finalizando...");
         ui.changeMainLabel("Concluído!");
         ui.changeSecondaryLabel("Concluído");
-        ui.changeProgress(true, 100, 20);
+        ui.changeProgress(true, 100, 10);
         ui.changeMainLabel("");
         ui.changeSecondaryLabel("");
         ui.getProgressBar().setVisible(false);
@@ -402,13 +446,52 @@ public class PrepareLauncherService extends Task<Void>
         logger.log("INFO", "PREPARELAUNCHER: DCBS inicializado." );
         Close.client();
       }
-      catch (IOException ex)
+      catch (IOException | InterruptedException ex)
       {
         alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().PrepareGameAndRun Thread");
       }
     }
   }
 
+  /**
+   * Install a specific configuration preset to the player account
+   */
+  public class InstallConfig extends Thread
+  {
+
+    /**
+     * Main method.
+     */
+    @Override
+    public void run()
+    {
+      switch (serviceName)
+      {
+        case "InstallMinCfg":
+          applySettingsProfile("min");
+          break;
+        case "InstallMedCfg":
+          applySettingsProfile("med");
+          break;
+        case "InstallMaxCfg":
+          applySettingsProfile("max");
+          break;
+        case "InstallNoJVMArgs":
+          applySettingsProfile("nojvm");
+          break;
+        default:
+          alerts.tryAgain();
+          break;
+      }
+      ui.changeMainLabel("");
+      ui.changeSecondaryLabel("");
+      ui.getProgressBar().setVisible(false);
+      ui.getMainButton().setDisable(false);
+      ui.setMenuBarDisable(false);
+      MainWindowController.isAccountSyncDone = false;
+      serviceName = "null";
+    }
+  }
 
   /**
    * Install a specific skin to the player account
@@ -427,7 +510,7 @@ public class PrepareLauncherService extends Task<Void>
       ui.changeSecondaryLabel("");
       ui.getProgressBar().setVisible(false);
       ui.getMainButton().setDisable(false);
-      ui.getMenuBar().setDisable(false);
+      ui.setMenuBarDisable(false);
       MainWindowController.isAccountSyncDone = false;
       serviceName = null;
     }
@@ -445,7 +528,7 @@ public class PrepareLauncherService extends Task<Void>
     @Override
     public void run()
     {
-      ui.changeProgress(true, 10, 20);
+      ui.changeProgress(true, 10, 10);
       ui.changeMainLabel("Aguarde...");
       ui.changeSecondaryLabel("Verificando...");
 
@@ -454,9 +537,9 @@ public class PrepareLauncherService extends Task<Void>
         pack = new File(DexCraftFiles.soundDCPXChocoboV2.toString());
         packUrl = UrlsDTO.getSoundDCPXChocoboV2();
       }
-      ui.changeProgress(true, 30, 20);
+      ui.changeProgress(true, 30, 10);
       File resourcePackFolder = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resourcepacks");
-      if (!pack.exists())
+      if ( (!pack.getName().equals("null.dc")) && (!pack.exists()) )
       {
         ui.resetProgress();
         ui.changeMainLabel("Baixando soundpack...");
@@ -468,7 +551,7 @@ public class PrepareLauncherService extends Task<Void>
         });
         while (downloadThread.isAlive())
         {
-          ui.changeProgress(true, Double.parseDouble(download.getProgressPercent().replace(",",".")), 20);
+          ui.changeProgress(true, Double.parseDouble(download.getProgressPercent().replace(",",".")), 10);
           ui.changeSecondaryLabel(download.getTimeEstimatedMsg());
           try
           {
@@ -480,15 +563,18 @@ public class PrepareLauncherService extends Task<Void>
           }
         }
 
-        ui.changeProgress(true, 100, 20);
+        ui.changeProgress(true, 100, 10);
         ui.changeSecondaryLabel("Concluído!");
       }
-      installResourcePack(pack.getName(), true);
+      if (!pack.getName().equals("null.dc"))
+      {
+        installResourcePack(pack.getName(), true);
+      }
       ui.changeMainLabel("");
       ui.changeSecondaryLabel("");
       ui.getProgressBar().setVisible(false);
       ui.getMainButton().setDisable(false);
-      ui.getMenuBar().setDisable(false);
+      ui.setMenuBarDisable(false);
       serviceName = null;
     }
   }
@@ -588,7 +674,7 @@ public class PrepareLauncherService extends Task<Void>
   {
     try
     {
-      ui.changeProgress(true, 20, 20);
+      ui.changeProgress(true, 20, 10);
       ui.changeMainLabel("Aguarde...");
       ui.changeSecondaryLabel("Verificando...");
 
@@ -599,7 +685,7 @@ public class PrepareLauncherService extends Task<Void>
       FileUtils.deleteQuietly(optionsTxt);
       FileUtils.touch(optionsTxt);
 
-      ui.changeProgress(true, 50, 20);
+      ui.changeProgress(true, 50, 10);
       ui.changeSecondaryLabel("Aplicando configurações...");
 
       try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(optionsTxt))))
@@ -643,7 +729,7 @@ public class PrepareLauncherService extends Task<Void>
             alerts.exceptionHandler(ex, "EXCEÇÃO em PrepareLauncherService.call().ChangeSkin Thread");
           }
         });
-        ui.changeProgress(true, 100, 20);
+        ui.changeProgress(true, 100, 10);
         ui.changeMainLabel("Concluído");
         ui.changeSecondaryLabel("Concluído");
       }
@@ -663,13 +749,15 @@ public class PrepareLauncherService extends Task<Void>
   {
     try
     {
-      ui.changeProgress(true, 10, 20);
+      ui.changeProgress(true, 10, 10);
       ui.changeMainLabel("Aguarde...");
       ui.changeSecondaryLabel("Verificando skin...");
 
       File skinFolder = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/skin");
       File skinFile1 = new File(skinFolder + "/steve.png");
       File skinFile2 = new File(skinFolder + "/alex.png");
+      FileUtils.deleteQuietly(skinFile1);
+      FileUtils.deleteQuietly(skinFile2);
       Collection<File> skinFile = FileUtils.listFiles(skinFolder, null, true);
       if (!skinFile.isEmpty())
       {
@@ -692,14 +780,14 @@ public class PrepareLauncherService extends Task<Void>
             logger.log("***ERRO***", "NÃO FOI POSSÍVEL ENCONTRAR SKINS NO REPOSITÓRIO SELECIONADO!");
           }
         });
-        ui.changeProgress(true, 30, 20);
+        ui.changeProgress(true, 30, 10);
         ui.changeMainLabel("Aguarde...");
         ui.changeSecondaryLabel("Alterando configurações...");
 
         File parseResources = new File(DexCraftFiles.launcherFolder + "/" + component + "/.minecraft/resources.dc");
         parseResourcePacks();
 
-        ui.changeProgress(true, 50, 20);
+        ui.changeProgress(true, 50, 10);
 
         List<String> read = FileUtils.readLines(parseResources, "UTF-8");
         read.forEach((item2)->
@@ -719,7 +807,7 @@ public class PrepareLauncherService extends Task<Void>
         }
         File skinDest = new File(dest + "/assets/minecraft/textures/entity/");
 
-        ui.changeProgress(true, 60, 20);
+        ui.changeProgress(true, 60, 10);
         ui.changeMainLabel("Aguarde...");
         ui.changeSecondaryLabel("Aplicando skin no perfil de jogo...");
 
@@ -746,13 +834,13 @@ public class PrepareLauncherService extends Task<Void>
         }
 
         ui.resetProgress();
-        ui.changeProgress(true, 60, 20);
+        ui.changeProgress(true, 60, 10);
 
         FileIO fio = new FileIO();
         fio.copiar(skinFile1,skinDest);
         fio.copiar(skinFile2, skinDest);
 
-        ui.changeProgress(true, 80, 20);
+        ui.changeProgress(true, 80, 10);
         ui.changeMainLabel("Aguarde...");
         ui.changeSecondaryLabel("Aplicando skin no perfil de jogo...");
 
@@ -780,7 +868,7 @@ public class PrepareLauncherService extends Task<Void>
         ui.resetProgress();
         ui.changeMainLabel("");
         ui.changeSecondaryLabel("Concluído");
-        ui.changeProgress(true, 100, 20);
+        ui.changeProgress(true, 100, 10);
       }
     }
     catch (IOException ex)
